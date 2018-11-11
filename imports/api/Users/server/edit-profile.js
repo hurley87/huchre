@@ -4,12 +4,12 @@ import { Meteor } from 'meteor/meteor';
 
 let action;
 
-const updateUser = (userId, { emailAddress, profile }) => {
+const updateUser = (userId, { emailAddress, username }) => {
   try {
     Meteor.users.update(userId, {
       $set: {
         'emails.0.address': emailAddress,
-        profile,
+        username,
       },
     });
   } catch (exception) {

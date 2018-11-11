@@ -29,15 +29,8 @@ class Profile extends React.Component {
 
     validate(component.form, {
       rules: {
-        firstName: {
+        username: {
           required: true,
-        },
-        lastName: {
-          required: true,
-        },
-        emailAddress: {
-          required: true,
-          email: true,
         },
         currentPassword: {
           required() {
@@ -53,15 +46,8 @@ class Profile extends React.Component {
         },
       },
       messages: {
-        firstName: {
-          required: 'What\'s your first name?',
-        },
-        lastName: {
-          required: 'What\'s your last name?',
-        },
-        emailAddress: {
-          required: 'Need an email address here.',
-          email: 'Is this email address correct?',
+        username: {
+          required: 'Choose a new username.',
         },
         currentPassword: {
           required: 'Need your current password if changing.',
@@ -84,12 +70,7 @@ class Profile extends React.Component {
   handleSubmit() {
     const profile = {
       emailAddress: this.emailAddress.value,
-      profile: {
-        name: {
-          first: this.firstName.value,
-          last: this.lastName.value,
-        },
-      },
+      username: this.username.value,
     };
 
     Meteor.call('users.editProfile', profile, (error) => {
@@ -138,32 +119,16 @@ class Profile extends React.Component {
   renderPasswordUser(loading, user) {
     return !loading ? (
       <div>
-        <Row>
-          <Col xs={6}>
-            <FormGroup>
-              <ControlLabel>First Name</ControlLabel>
-              <input
-                type="text"
-                name="firstName"
-                defaultValue={user.profile.name.first}
-                ref={firstName => (this.firstName = firstName)}
-                className="form-control"
-              />
-            </FormGroup>
-          </Col>
-          <Col xs={6}>
-            <FormGroup>
-              <ControlLabel>Last Name</ControlLabel>
-              <input
-                type="text"
-                name="lastName"
-                defaultValue={user.profile.name.last}
-                ref={lastName => (this.lastName = lastName)}
-                className="form-control"
-              />
-            </FormGroup>
-          </Col>
-        </Row>
+        <FormGroup>
+          <ControlLabel>Username</ControlLabel>
+          <input
+            type="text"
+            name="username"
+            defaultValue={user.username}
+            ref={username => (this.username = username)}
+            className="form-control"
+          />
+        </FormGroup>
         <FormGroup>
           <ControlLabel>Email Address</ControlLabel>
           <input

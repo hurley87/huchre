@@ -11,12 +11,7 @@ Meteor.methods({
   'users.editProfile': function usersEditProfile(profile) {
     check(profile, {
       emailAddress: String,
-      profile: {
-        name: {
-          first: String,
-          last: String,
-        },
-      },
+      username: String,
     });
 
     return editProfile({ userId: this.userId, profile })
