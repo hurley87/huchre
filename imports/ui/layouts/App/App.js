@@ -36,13 +36,6 @@ const App = props => (
   <Router>
     {!props.loading ? (
       <div className="App">
-        {props.authenticated ?
-          <VerifyEmailAlert
-            userId={props.userId}
-            emailVerified={props.emailVerified}
-            emailAddress={props.emailAddress}
-          />
-          : ''}
         <Navigation {...props} />
         <Grid>
           <Switch>
