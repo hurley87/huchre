@@ -6,12 +6,44 @@ import rateLimit from '../../modules/rate-limit';
 Meteor.methods({
   'games.insert': function gamesInsert(doc) {
     check(doc, {
-      title: String,
-      body: String,
+      score: Number,
+    });
+    const suits = ['S', 'D', 'H', 'C'];
+    const cards = [];
+
+    let count = 9;
+
+    while (count <= 14) {
+      for (let i in suits) {
+        cards.push({
+          suit: suits[i],
+          value: count
+        });
+      } 
+      count += 1;
+    }
+
+    cards.push({
+      suit: "J",
+      value: 15
     });
 
+    console.log(cards)
+
     try {
-      return Games.insert({ owner: this.userId, ...doc });
+      return Games.insert({
+        creator: this.userId,
+        score: doc.score,
+        challenger: '',
+        creatorScore: 0,
+        challengerScore: 0,
+        creatorHand: [],
+        challengerHand: [],
+        dealer: this.userId,
+        handCount: 0,
+        currentPlayer: this.userId,
+        deck: cards,
+      });
     } catch (exception) {
       throw new Meteor.Error('500', exception);
     }
@@ -19,8 +51,17 @@ Meteor.methods({
   'games.update': function gamesUpdate(doc) {
     check(doc, {
       _id: String,
-      title: String,
-      body: String,
+      creator: String,
+      score: Number,
+      challenger: String,
+      creatorScore: Number,
+      challengerScore: Number,
+      creatorHand: Array,
+      challengerHand: Array,
+      dealer: String,
+      handCount: Number,
+      currentPlayer: String,
+      deck: Array,
     });
 
     try {

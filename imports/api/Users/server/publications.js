@@ -9,3 +9,9 @@ Meteor.publish('users.editProfile', function usersProfile() {
     },
   });
 });
+
+Meteor.publish('usersAll', function usersAll() {
+  console.log('HEYYY');
+  return Meteor.users.find({ inGame: false }, { fields: { 'profile': 1 } });
+});
+

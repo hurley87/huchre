@@ -55,6 +55,13 @@ class Signup extends React.Component {
       email: this.emailAddress.value,
       password: this.password.value,
       username: this.username.value,
+      profile: {
+        inGame: false,
+        points: 0,
+        gamesPlayed: 0,
+        euchresReceived: 0,
+        euchresGiven: 0,
+      },
     }, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');

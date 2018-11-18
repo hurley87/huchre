@@ -11,6 +11,8 @@ import Navigation from '../../components/Navigation/Navigation';
 import Authenticated from '../../components/Authenticated/Authenticated';
 import Public from '../../components/Public/Public';
 import Index from '../../pages/Index/Index';
+import Games from '../../pages/Games/Games';
+import ViewGame from '../../pages/ViewGame/ViewGame';
 import Documents from '../../pages/Documents/Documents';
 import NewDocument from '../../pages/NewDocument/NewDocument';
 import ViewDocument from '../../pages/ViewDocument/ViewDocument';
@@ -38,9 +40,11 @@ const App = props => (
         <Grid>
           <Switch>
             <Route exact name="index" path="/" component={Index} />
+            <Authenticated exact path="/games" component={Games} {...props} />
             <Authenticated exact path="/documents" component={Documents} {...props} />
             <Authenticated exact path="/documents/new" component={NewDocument} {...props} />
             <Authenticated exact path="/documents/:_id" component={ViewDocument} {...props} />
+            <Authenticated exact path="/games/:_id" component={ViewGame} {...props} />
             <Authenticated exact path="/documents/:_id/edit" component={EditDocument} {...props} />
             <Authenticated exact path="/profile" component={Profile} {...props} />
             <Public path="/signup" component={Signup} {...props} />
