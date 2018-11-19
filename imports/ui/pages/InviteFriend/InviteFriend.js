@@ -53,7 +53,7 @@ class InviteFriend extends React.Component {
       <div className="InviteFriend">
         <Row>
           <Col xs={12} sm={6} md={5} lg={4}>
-            <h4 className="page-header">Log In</h4>
+            <h4 className="page-header">Invite a Friend</h4>
             <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
               <FormGroup>
                 <ControlLabel>Email Address</ControlLabel>
@@ -64,22 +64,7 @@ class InviteFriend extends React.Component {
                   className="form-control"
                 />
               </FormGroup>
-              <FormGroup>
-                <ControlLabel className="clearfix">
-                  <span className="pull-left">Password</span>
-                  <Link className="pull-right" to="/recover-password">Forgot password?</Link>
-                </ControlLabel>
-                <input
-                  type="password"
-                  name="password"
-                  ref={password => (this.password = password)}
-                  className="form-control"
-                />
-              </FormGroup>
-              <Button type="submit" bsStyle="success">Log In</Button>
-              <AccountPageFooter>
-                <p>{'Don\'t have an account?'} <Link to="/signup">Sign Up</Link>.</p>
-              </AccountPageFooter>
+              <Button type="submit" bsStyle="success">Invite a Friend</Button>
             </form>
           </Col>
         </Row>

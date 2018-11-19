@@ -5,7 +5,6 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import Games from '../../../api/Games/Games';
-import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
 import { Redirect } from 'react-router-dom';
 import InviteFriend from "../InviteFriend/InviteFriend";
@@ -43,7 +42,7 @@ const renderGame = (doc, match, history) => (doc ? (
 const ViewGame = ({
   loading, doc, match, history,
 }) => (
-  !loading ? doc && doc.challenger == '' ? <InviteFriend /> : renderGame(doc, match, history) : <Loading />
+  !loading ? doc && doc.playerTwo == '' ? <InviteFriend /> : renderGame(doc, match, history) : <Loading />
 );
 
 ViewGame.defaultProps = {

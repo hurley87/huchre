@@ -5,21 +5,21 @@ import Games from '../Games';
 Meteor.publish('currentGames', function currentGames() {
   return Games.find({
     $or: [
-      { challenger: this.userId },
-      { creator: this.userId, challenger: { $ne: '' } },
+      { playerTwo: this.userId },
+      { playerOne: this.userId, playerTwo: { $ne: '' } },
     ],
   });
 });
 
 Meteor.publish('openGames', function openGames() {
-  return Games.find({ challenger: "" });
+  return Games.find({ playerTwo: "" });
 });
 
 Meteor.publish('unfinishedGames', function currentGames() {
   return Games.find({
     $or: [
-      { challengerScore: { $lte: 100 } },
-      { creatorScore: { $lte: 100 } },
+      { playerTwoScore: { $lte: 100 } },
+      { playerOneScore: { $lte: 100 } },
     ],
   });
 });

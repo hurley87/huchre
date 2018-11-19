@@ -30,13 +30,19 @@ Meteor.methods({
     
     try {
       return Games.insert({
-        creator: this.userId,
+        playerOne: this.userId,
         score: doc.score,
-        challenger: '',
-        creatorScore: 0,
-        challengerScore: 0,
-        creatorHand: [],
-        challengerHand: [],
+        playerTwo: '',
+        playerOneScore: 0,
+        playerTwoScore: 0,
+        playerOneHand: [],
+        playerOneFirst: [],
+        playerOneSecond: [],
+        playerOneThird: [],
+        playerTwoHand: [],
+        playerTwoFirst: [],
+        playerTwoSecond: [],
+        playerTwoThird: [],
         dealer: this.userId,
         handCount: 0,
         currentPlayer: this.userId,
@@ -49,19 +55,25 @@ Meteor.methods({
   'games.update': function gamesUpdate(doc) {
     check(doc, {
       _id: String,
-      creator: String,
+      playerOne: String,
       score: Number,
-      challenger: String,
-      creatorScore: Number,
-      challengerScore: Number,
-      creatorHand: Array,
-      challengerHand: Array,
+      playerTwo: String,
+      playerOneScore: Number,
+      playerTwoScore: Number,
+      playerOneHand: Array,
+      playerOneFirst: Array,
+      playerOneSecond: Array,
+      playerOneThird: Array,
+      playerTwoHand: Array,
+      playerTwoFirst: Array,
+      playerTwoSecond: Array,
+      playerTwoThird: Array,
       dealer: String,
       handCount: Number,
       currentPlayer: String,
       deck: Array,
     });
-
+    
     try {
       const gameId = doc._id;
       Games.update(gameId, { $set: doc });
