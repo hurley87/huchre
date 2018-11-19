@@ -11,6 +11,7 @@ import Loading from '../../components/Loading/Loading';
 const joinGame = (game, history) => {
   let newGame = game;
   newGame.playerTwo = Meteor.userId();
+  newGame.status = "invite-accepted";
   console.log(newGame);
   Meteor.call('games.update', newGame, (error, gameId) => {
     if (error) {

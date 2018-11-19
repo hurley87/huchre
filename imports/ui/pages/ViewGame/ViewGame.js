@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import Games from '../../../api/Games/Games';
 import Loading from '../../components/Loading/Loading';
 import { Redirect } from 'react-router-dom';
-import InviteFriend from "../InviteFriend/InviteFriend";
+import InviteFriend from '../InviteFriend/InviteFriend';
 
 const endGame = (gameId, history) => {
   if (confirm('Are you sure you want to end this game?')) {
@@ -15,7 +15,7 @@ const endGame = (gameId, history) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
-        Bert.alert('Game deleted!', 'success');
+        Bert.alert('Game ended!', 'success');
         history.push('/games');
       }
     });
@@ -24,19 +24,12 @@ const endGame = (gameId, history) => {
 
 const renderGame = (doc, match, history) => (doc ? (
   <div className="ViewGame">
-    <div className="page-header clearfix">
-      <h4 className="pull-left">{ doc && doc.title }</h4>
-      <ButtonToolbar className="pull-right">
-        <ButtonGroup bsSize="small">
-          <Button onClick={() => endGame(doc._id, history)} className="text-danger">
-            End Game
-          </Button>
-        </ButtonGroup>
-      </ButtonToolbar>
-    </div>
-    { doc && doc.body }
+    <h4 className="pull-left">{doc && doc.status}</h4>
+    <Button onClick={() => endGame(doc._id, history)} className="text-danger">
+      End Game
+    </Button>
   </div>
-) : <Redirect to={`/games`} /> );
+) : <Redirect to="/games" />);
 
 
 const ViewGame = ({
@@ -61,7 +54,7 @@ export default withTracker(({ match }) => {
   const subscription = Meteor.subscribe('games.view', gameId);
   const doc = Games.findOne(gameId);
 
-  console.log(doc)
+  console.log(doc);
 
   return {
     loading: !subscription.ready(),

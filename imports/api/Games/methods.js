@@ -47,6 +47,7 @@ Meteor.methods({
         handCount: 0,
         currentPlayer: this.userId,
         deck: cards,
+        status: 'invite-sent',
       });
     } catch (exception) {
       throw new Meteor.Error('500', exception);
@@ -72,12 +73,13 @@ Meteor.methods({
       handCount: Number,
       currentPlayer: String,
       deck: Array,
+      status: String,
     });
-    
+
     try {
       const gameId = doc._id;
       Games.update(gameId, { $set: doc });
-      return gameId; // Return _id so we can redirect to game after update.
+      return gameId; 
     } catch (exception) {
       throw new Meteor.Error('500', exception);
     }
