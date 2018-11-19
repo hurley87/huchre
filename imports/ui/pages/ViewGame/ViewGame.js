@@ -7,9 +7,11 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import Games from '../../../api/Games/Games';
 import NotFound from '../NotFound/NotFound';
 import Loading from '../../components/Loading/Loading';
+import { Redirect } from 'react-router-dom';
+import InviteFriend from "../InviteFriend/InviteFriend";
 
-const handleRemove = (gameId, history) => {
-  if (confirm('Are you sure? This is permanent!')) {
+const endGame = (gameId, history) => {
+  if (confirm('Are you sure you want to end this game?')) {
     Meteor.call('games.remove', gameId, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
@@ -27,21 +29,21 @@ const renderGame = (doc, match, history) => (doc ? (
       <h4 className="pull-left">{ doc && doc.title }</h4>
       <ButtonToolbar className="pull-right">
         <ButtonGroup bsSize="small">
-          <Button onClick={() => history.push(`${match.url}/edit`)}>Edit</Button>
-          <Button onClick={() => handleRemove(doc._id, history)} className="text-danger">
-            Delete
+          <Button onClick={() => endGame(doc._id, history)} className="text-danger">
+            End Game
           </Button>
         </ButtonGroup>
       </ButtonToolbar>
     </div>
     { doc && doc.body }
   </div>
-) : <NotFound />);
+) : <Redirect to={`/games`} /> );
+
 
 const ViewGame = ({
   loading, doc, match, history,
 }) => (
-  !loading ? renderGame(doc, match, history) : <Loading />
+  !loading ? doc && doc.challenger == '' ? <InviteFriend /> : renderGame(doc, match, history) : <Loading />
 );
 
 ViewGame.defaultProps = {
@@ -59,6 +61,8 @@ export default withTracker(({ match }) => {
   const gameId = match.params._id;
   const subscription = Meteor.subscribe('games.view', gameId);
   const doc = Games.findOne(gameId);
+
+  console.log(doc)
 
   return {
     loading: !subscription.ready(),

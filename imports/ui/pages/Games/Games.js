@@ -10,7 +10,7 @@ import Loading from '../../components/Loading/Loading';
 import NewGame from '../NewGame/NewGame';
 import CurrentGames from '../CurrentGames/CurrentGames';
 import OpenGames from '../OpenGames/OpenGames';
-import { Route, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 const Games = ({
   loading, openLenth, currentGames, match, history,

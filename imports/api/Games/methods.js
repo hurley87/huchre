@@ -27,9 +27,7 @@ Meteor.methods({
       suit: "J",
       value: 15
     });
-
-    console.log(cards)
-
+    
     try {
       return Games.insert({
         creator: this.userId,

@@ -6,7 +6,7 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import AccountPageFooter from '../../components/AccountPageFooter/AccountPageFooter';
 import validate from '../../../modules/validate';
 
-class Login extends React.Component {
+class InviteFriend extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -50,7 +50,7 @@ class Login extends React.Component {
 
   render() {
     return (
-      <div className="Login">
+      <div className="InviteFriend">
         <Row>
           <Col xs={12} sm={6} md={5} lg={4}>
             <h4 className="page-header">Log In</h4>
@@ -88,4 +88,4 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+export default InviteFriend;
