@@ -10,7 +10,7 @@ import Loading from '../../components/Loading/Loading';
 
 const joinGame = (game, history) => {
   let newGame = game;
-  newGame.challenger = Meteor.userId();
+  newGame.playerTwo = Meteor.userId();
   console.log(newGame);
   Meteor.call('games.update', newGame, (error, gameId) => {
     if (error) {
@@ -40,29 +40,15 @@ const OpenGames = ({
               <tr key={game._id}>
                 <td>{timeago(game.updatedAt)}</td>
                 <td>{monthDayYearAtTime(game.createdAt)}</td>
-                {
-                  Meteor.userId() == game.creator || Meteor.userId() == game.challenger ? (
-                    <td>
-                      <Button
-                        bsStyle="primary"
-                        onClick={() => history.push(`${match.url}/${game._id}`)}
-                        block
-                      >
-                        View Game
+                <td>
+                  <Button
+                    bsStyle="success"
+                    onClick={() => joinGame(game, history)}
+                    block
+                  >
+                    Join Game
                       </Button>
-                    </td>
-                    ) : '' == game.challenger ? (
-                    <td>
-                      <Button
-                        bsStyle="success"
-                        onClick={() => joinGame(game, history)}
-                        block
-                      >
-                        Join Game
-                      </Button>
-                    </td>
-                  ) : null
-                }
+                </td>
             </tr>
           ))}
         </tbody>
@@ -80,7 +66,7 @@ OpenGames.propTypes = {
 export default withTracker(() => {
   const subscription = Meteor.subscribe('openGames');
   const games = GamesCollection.find({
-    challenger: '', 
+    playerTwo: '', 
   }).fetch();
   console.log(games)
   return {
