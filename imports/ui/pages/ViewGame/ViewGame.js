@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Button } from 'react-bootstrap';
@@ -33,63 +34,113 @@ const startGame = (game) => {
   });
 };
 
-const firstPerson = doc => (doc ? (
-  <Row>
+const renderTop = doc => (doc ? (
+  <Row className="text-center">
     <Col xs={12}>
-      1st player: {doc.playerOneUsername}
+      {doc.username}
+    </Col>
+    <Col xs={12}>
+      hand
+    </Col>
+    <Col xs={4}>
+      hand 1
+    </Col>
+    <Col xs={4}>
+      hand 2
+    </Col>
+    <Col xs={4}>
+      hand 3
     </Col>
   </Row>
-) : null);
+) : <Redirect to="/games" />);
 
-const secondPerson = doc => (doc ? (
-  <Row>
+const renderBottom = doc => (doc ? (
+  <Row className="text-center">
+    <Col xs={4}>
+      hand 1
+    </Col>
+    <Col xs={4}>
+      hand 2
+    </Col>
+    <Col xs={4}>
+      hand 3
+    </Col>
     <Col xs={12}>
-      2nd player: {doc.playerTwoUsername}
+      hand
+    </Col>
+    <Col xs={12}>
+      {doc.username}
     </Col>
   </Row>
-) : null);
+) : <Redirect to="/games" />);
 
-const renderGame = (doc, match, history) => (doc ? (
+const renderTable = doc => (doc ? (
   <div className="ViewGame">
     <Row>
       <Col xs={12}>
         <h4 className="pull-left">{doc && doc.status}</h4>
-        <Button
-          bsStyle="danger"
-          onClick={() => endGame(doc._id)}
-          block
-        >
-         End Game
-        </Button>
+        <Button onClick={() => endGame(doc._id)} > End Game</Button>
         <br />
       </Col>
     </Row>
+    {
+      doc.playerOne && doc.playerOne.id !== Meteor.userId() ? renderTop(doc.playerOne) : renderTop(doc.playerTwo)
+    }
+    <br />
+    <hr />
+    <br />
     <Row>
       <Col xs={12}>
-        {
-          doc.playerOne == Meteor.userId() ? firstPerson(doc) : secondPerson(doc)
-        }
+        hey
       </Col>
     </Row>
-    <Row>
-      <Col xs={12}>
-        {
-          doc.playerTwo == Meteor.userId() ? firstPerson(doc) : secondPerson(doc)
-        }
-      </Col>
-    </Row>
+    <br />
+    <hr />
+    <br />
+    {
+      doc.playerTwo && doc.playerTwo.id !== Meteor.userId() ? renderBottom(doc.playerOne) : renderBottom(doc.playerTwo)
+    }
   </div>
 ) : <Redirect to="/games" />);
 
+const renderDeal = doc => (doc ? (
+  <Row className="text-center">
+    Deal
+  </Row>
+) : <Redirect to="/games" />);
+
+
+const renderPickup = doc => (doc ? (
+  <Row className="text-center">
+    Pickup
+  </Row>
+) : <Redirect to="/games" />);
+
+const renderMake = doc => (doc ? (
+  <Row className="text-center">
+    make
+  </Row>
+) : <Redirect to="/games" />);
+
+const renderStickDealer = doc => (doc ? (
+  <Row className="text-center">
+    stickdealer
+  </Row>
+) : <Redirect to="/games" />);
 
 const ViewGame = ({
-  loading, doc, match, history,
+  loading, doc,
 }) => (
-  !loading ? doc && doc.playerTwo == '' ? <InviteFriend /> : renderGame(doc, match, history) : <Loading />
+  !loading ? doc && doc.status == 'invite-sent' ? <InviteFriend /> :
+    doc.status == 'deal' ? renderDeal(doc) :
+      doc.status == 'pickup' ? renderPickup(doc) :
+        doc.status == 'make' ? renderMake(doc) :
+          doc.status == 'stickdealer' ? renderStickDealer(doc) :
+            renderTable(doc) : <Loading />
 );
 
 ViewGame.defaultProps = {
-  doc: null,
+  doc: <Redirect to="/games" />,
 };
 
 ViewGame.propTypes = {

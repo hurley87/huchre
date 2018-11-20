@@ -20,7 +20,6 @@ const Games = ({
 
 Games.propTypes = {
   loading: PropTypes.bool.isRequired,
-  games: PropTypes.arrayOf(PropTypes.object).isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
@@ -28,12 +27,12 @@ Games.propTypes = {
 export default withTracker(() => {
   const subscription = Meteor.subscribe('unfinishedGames');
   const openLength = GamesCollection.find({
-    playerTwo: '',
+    'playerTwo.id': '',
   }).fetch().length;
   const currentGames = GamesCollection.find({
     $or: [
-      { playerTwo: Meteor.userId() },
-      { playerOne: Meteor.userId() },
+      { 'playerTwo.id': Meteor.userId() },
+      { 'playerOne.id': Meteor.userId() },
     ],
   }).fetch();
 

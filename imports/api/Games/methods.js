@@ -6,7 +6,7 @@ import rateLimit from '../../modules/rate-limit';
 Meteor.methods({
   'games.insert': function gamesInsert(doc) {
     check(doc, {
-      score: Number,
+      limit: Number,
     });
     const suits = ['S', 'D', 'H', 'C'];
     const cards = [];
@@ -30,27 +30,32 @@ Meteor.methods({
 
     try {
       return Games.insert({
-        playerOne: this.userId,
-        playerOneUsername: Meteor.users.findOne(this.userId).username,
-        score: doc.score,
-        playerTwo: '',
-        playerTwoUsername: '',
-        playerOneScore: 0,
-        playerTwoScore: 0,
-        playerOneHand: [],
-        playerOneFirst: [],
-        playerOneSecond: [],
-        playerOneThird: [],
-        playerTwoHand: [],
-        playerTwoFirst: [],
-        playerTwoSecond: [],
-        playerTwoThird: [],
+        limit: doc.limit,
+        playerOne: {
+          id: this.userId,
+          username: Meteor.users.findOne(this.userId).username,
+          score: 0,
+          hand: [],
+          first: [],
+          second: [],
+          third: [],
+        },
+        playerTwo: {
+          id: '',
+          username: '',
+          score: 0,
+          hand: [],
+          first: [],
+          second: [],
+          third: [],
+        },
         dealer: this.userId,
-        handCount: 0,
+        maker: '',
         currentPlayer: this.userId,
+        handCount: 0,
         deck: cards,
         status: 'invite-sent',
-
+        trump: '',
       });
     } catch (exception) {
       throw new Meteor.Error('500', exception);
@@ -59,31 +64,21 @@ Meteor.methods({
   'games.update': function gamesUpdate(doc) {
     check(doc, {
       _id: String,
-      playerOne: String,
-      playerOneUsername: String,
-      score: Number,
-      playerTwo: String,
-      playerTwoUsername: String,
-      playerOneScore: Number,
-      playerTwoScore: Number,
-      playerOneHand: Array,
-      playerOneFirst: Array,
-      playerOneSecond: Array,
-      playerOneThird: Array,
-      playerTwoHand: Array,
-      playerTwoFirst: Array,
-      playerTwoSecond: Array,
-      playerTwoThird: Array,
+      limit: Number,
+      playerOne: Object,
+      playerTwo: Object,
       dealer: String,
+      maker: String,
       handCount: Number,
       currentPlayer: String,
       deck: Array,
       status: String,
+      trump: String,
     });
 
     let newDoc = doc;
-    if (doc.playerTwo != '') {
-      newDoc.playerTwoUsername = Meteor.users.findOne(doc.playerTwo).username;
+    if (doc.playerTwo.id != '') {
+      newDoc.playerTwo.username = Meteor.users.findOne(doc.playerTwo.id).username;
     }
 
     try {

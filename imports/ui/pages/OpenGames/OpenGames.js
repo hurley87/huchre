@@ -10,10 +10,10 @@ import Loading from '../../components/Loading/Loading';
 
 const joinGame = (game, history) => {
   let newGame = game;
-  newGame.playerTwo = Meteor.userId();
+  newGame.playerTwo.id = Meteor.userId();
   newGame.status = "invite-accepted";
   console.log(newGame);
-  Meteor.call('games.update', newGame, (error, gameId) => {
+  Meteor.call('games.update', newGame, (error) => {
     if (error) {
       Bert.alert(error.reason, 'danger');
     } else {
@@ -67,7 +67,7 @@ OpenGames.propTypes = {
 export default withTracker(() => {
   const subscription = Meteor.subscribe('openGames');
   const games = GamesCollection.find({
-    playerTwo: '', 
+    'playerTwo.id': '', 
   }).fetch();
   console.log(games)
   return {

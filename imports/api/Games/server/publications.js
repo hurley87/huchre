@@ -18,8 +18,8 @@ Meteor.publish('openGames', function openGames() {
 Meteor.publish('unfinishedGames', function currentGames() {
   return Games.find({
     $or: [
-      { playerTwoScore: { $lte: 100 } },
-      { playerOneScore: { $lte: 100 } },
+      { 'playerTwo.score': { $lte: 100 } },
+      { 'playerOne.score': { $lte: 100 } },
     ],
   });
 });

@@ -10,13 +10,13 @@ class NewGame extends React.Component {
     const component = this;
     validate(component.form, {
       rules: {
-        score: {
+        limit: {
           required: true,
         },
       },
       messages: {
-        score: {
-          required: 'Need a score in here, Seuss.',
+        limit: {
+          required: 'Need a limit in here, Seuss.',
         },
       },
       submitHandler() { component.handleSubmit(); },
@@ -26,9 +26,9 @@ class NewGame extends React.Component {
   handleSubmit() {
     const { history } = this.props;
     const existingGame = this.props.doc && this.props.doc._id;
-    const score = parseInt(this.score.value);
+    const limit = parseInt(this.limit.value);
     const doc = {
-      score,
+      limit,
     };
 
     if (existingGame) doc._id = existingGame;
@@ -48,14 +48,14 @@ class NewGame extends React.Component {
     const { doc } = this.props;
     return (
       <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
-        <FormGroup>
-          <ControlLabel>What score would you like to play up to?</ControlLabel>
+        <FormGroup className='hidden'>
+          <ControlLabel>What limit would you like to play up to?</ControlLabel>
           <input
             type="number"
             className="form-control"
-            name="score"
-            ref={score => (this.score = score)}
-            defaultValue={doc && doc.score}
+            name="limit"
+            ref={limit => (this.limit = limit)}
+            defaultValue={doc && doc.limit}
           />
         </FormGroup>
         <Button type="submit" bsStyle="success">
@@ -67,12 +67,11 @@ class NewGame extends React.Component {
 }
 
 NewGame.defaultProps = {
-  doc: { score: 100 },
+  doc: { limit: 100 },
 };
 
 NewGame.propTypes = {
   doc: PropTypes.object,
-  history: PropTypes.object.isRequired,
 };
 
 export default NewGame;
