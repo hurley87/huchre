@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'react-bootstrap';
+import { Row, Col, Button } from 'react-bootstrap';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -9,25 +9,75 @@ import Loading from '../../components/Loading/Loading';
 import { Redirect } from 'react-router-dom';
 import InviteFriend from '../InviteFriend/InviteFriend';
 
-const endGame = (gameId, history) => {
+const endGame = (gameId) => {
   if (confirm('Are you sure you want to end this game?')) {
     Meteor.call('games.remove', gameId, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
         Bert.alert('Game ended!', 'success');
-        history.push('/games');
       }
     });
   }
 };
 
+const startGame = (game) => {
+  const newGame = game;
+  newGame.status = 'started';
+  Meteor.call('games.update', game, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      Bert.alert('Game started!', 'success');
+    }
+  });
+};
+
+const firstPerson = doc => (doc ? (
+  <Row>
+    <Col xs={12}>
+      1st player: {doc.playerOneUsername}
+    </Col>
+  </Row>
+) : null);
+
+const secondPerson = doc => (doc ? (
+  <Row>
+    <Col xs={12}>
+      2nd player: {doc.playerTwoUsername}
+    </Col>
+  </Row>
+) : null);
+
 const renderGame = (doc, match, history) => (doc ? (
   <div className="ViewGame">
-    <h4 className="pull-left">{doc && doc.status}</h4>
-    <Button onClick={() => endGame(doc._id, history)} className="text-danger">
-      End Game
-    </Button>
+    <Row>
+      <Col xs={12}>
+        <h4 className="pull-left">{doc && doc.status}</h4>
+        <Button
+          bsStyle="danger"
+          onClick={() => endGame(doc._id)}
+          block
+        >
+         End Game
+        </Button>
+        <br />
+      </Col>
+    </Row>
+    <Row>
+      <Col xs={12}>
+        {
+          doc.playerOne == Meteor.userId() ? firstPerson(doc) : secondPerson(doc)
+        }
+      </Col>
+    </Row>
+    <Row>
+      <Col xs={12}>
+        {
+          doc.playerTwo == Meteor.userId() ? firstPerson(doc) : secondPerson(doc)
+        }
+      </Col>
+    </Row>
   </div>
 ) : <Redirect to="/games" />);
 

@@ -14,25 +14,27 @@ Meteor.methods({
     let count = 9;
 
     while (count <= 14) {
-      for (let i in suits) {
+      for (const i in suits) {
         cards.push({
           suit: suits[i],
-          value: count
+          value: count,
         });
-      } 
+      }
       count += 1;
     }
 
     cards.push({
-      suit: "J",
-      value: 15
+      suit: 'J',
+      value: 15,
     });
-    
+
     try {
       return Games.insert({
         playerOne: this.userId,
+        playerOneUsername: Meteor.users.findOne(this.userId).username,
         score: doc.score,
         playerTwo: '',
+        playerTwoUsername: '',
         playerOneScore: 0,
         playerTwoScore: 0,
         playerOneHand: [],
@@ -48,6 +50,7 @@ Meteor.methods({
         currentPlayer: this.userId,
         deck: cards,
         status: 'invite-sent',
+
       });
     } catch (exception) {
       throw new Meteor.Error('500', exception);
@@ -57,8 +60,10 @@ Meteor.methods({
     check(doc, {
       _id: String,
       playerOne: String,
+      playerOneUsername: String,
       score: Number,
       playerTwo: String,
+      playerTwoUsername: String,
       playerOneScore: Number,
       playerTwoScore: Number,
       playerOneHand: Array,
@@ -76,10 +81,15 @@ Meteor.methods({
       status: String,
     });
 
+    let newDoc = doc;
+    if (doc.playerTwo != '') {
+      newDoc.playerTwoUsername = Meteor.users.findOne(doc.playerTwo).username;
+    }
+
     try {
-      const gameId = doc._id;
-      Games.update(gameId, { $set: doc });
-      return gameId; 
+      const gameId = newDoc._id;
+      Games.update(gameId, { $set: newDoc });
+      return gameId;
     } catch (exception) {
       throw new Meteor.Error('500', exception);
     }
