@@ -23,6 +23,16 @@ const endGame = (gameId) => {
   }
 };
 
+const updateGame = (newState) => {
+  Meteor.call('games.update', newState, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      console.log('cards are dealt');
+    }
+  });
+}
+
 const handleDeal = (game) => {
   const newState = game;
   newState.status = 'order';
@@ -208,26 +218,17 @@ const handleOrderDiscard = (currentState, suit, value) => {
   if(newState.currentPlayer === newState.playerOne.id) {
     newState.playerOne.hand.push({ suit: currentState.deck[0].suit, value: currentState.deck[0].value });
     const index = _.findIndex(newState.playerOne.hand, { suit, value})
-    console.log("INDEX", index);
     newState.playerOne.hand.splice(index, 1);
   } else {
     newState.playerTwo.hand.push({ suit: currentState.deck[0].suit, value: currentState.deck[0].value });
     const index = _.findIndex(newState.playerTwo.hand, { suit, value })
-    console.log("INDEX", index);
     newState.playerTwo.hand.splice(index, 1);
   }
   
   newState.dealer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerOne.id
   newState.trump = newState.deck[0].suit;
   newState.status = 'game';
-
-  Meteor.call('games.update', newState, (error) => {
-    if (error) {
-      Bert.alert(error.reason, 'danger');
-    } else {
-      console.log('cards are dealt');
-    }
-  });
+  updateGame(newState);
 }
 
 ///////////////
@@ -285,33 +286,78 @@ const handleOrderPickup = (currentState) => {
     newState.currentPlayer = newState.playerOne.id;
   }
   newState.trump = newState.deck[0].suit;
-  Meteor.call('games.update', newState, (error) => {
-    if (error) {
-      Bert.alert(error.reason, 'danger');
-    } else {
-      console.log('cards are dealt');
-    }
-  });
+  updateGame(newState);
 }
 
 const handleOrderPass = (currentState) => {
   const newState = currentState;
   newState.status = 'make';
-  Meteor.call('games.update', newState, (error) => {
-    if (error) {
-      Bert.alert(error.reason, 'danger');
-    } else {
-      console.log('cards are dealt');
-    }
-  });
+  newState.currentPlayer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerOne.id
+  updateGame(newState);
 }
 
 const renderMake = currentState => (currentState ? (
   <Row className="text-center">
-    make
+    <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer</h5>
+    <h5>{currentState.playerOne.id === currentState.maker ? currentState.playerOne.username : currentState.playerTwo.username} made it {currentState.trump}</h5>
+    {
+      currentState.currentPlayer === Meteor.userId() ?
+        Meteor.userId() === currentState.playerOne.id ? makeCurrentUi(currentState.playerOne, currentState) : makeCurrentUi(currentState.playerTwo, currentState)
+        :
+        Meteor.userId() === currentState.playerOne.id ? makeOpposingUi(currentState.playerOne, currentState) : makeOpposingUi(currentState.playerTwo, currentState)
+    }
+    <br />
     <Button onClick={() => endGame(currentState._id)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
+
+const makeCurrentUi = (player, currentState) => (player ? (
+  <div>
+    What suit do you want to make it? 
+    {
+      ["H", "S", "C", "D"].map((suit, i) => {
+        return (<Button key={i} onClick={() => handleMakeSuit(currentState, suit)}>{suit}</Button>);
+      })
+    }
+    <Button onClick={() => handleMakeSuit(currentState, 'pass')}>pass</Button>
+  </div>
+) : null)
+
+const makeOpposingUi = (player, currentState) => (player ? (
+  <div>
+    Waiting on opposing player to make it.
+  </div>
+) : null)
+
+const handleMakeSuit = (currentState, suit) => {
+  const newState = currentState;
+
+  if (suit === 'pass') {
+    newState.status = 'stickdealer';
+    newState.currentPlayer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerTwo.id
+  } else {
+    newState.status = 'game';
+    newState.trump = suit;
+    if (newState.currentPlayer === newState.playerOne.id) {
+      newState.maker = newState.playerOne.id;
+      newState.currentPlayer = newState.playerTwo.id;
+    } else {
+      newState.maker = newState.playerTwo.id;
+      newState.currentPlayer = newState.playerOne.id;
+    }
+  }
+  
+  if (newState.currentPlayer === newState.playerOne.id) {
+    newState.maker = newState.playerOne.id;
+    newState.currentPlayer = newState.playerTwo.id;
+  } else {
+    newState.maker = newState.playerTwo.id;
+    newState.currentPlayer = newState.playerOne.id;
+  }
+  newState.trump = newState.deck[0].suit;
+  
+  updateGame(newState);
+}
 
 const renderStickDealer = currentState => (currentState ? (
   <Row className="text-center">
