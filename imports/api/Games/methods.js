@@ -1,7 +1,10 @@
+/* eslint-disable no-empty */
+import _ from 'lodash';
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Games from './Games';
 import rateLimit from '../../modules/rate-limit';
+
 
 Meteor.methods({
   'games.insert': function gamesInsert(doc) {
@@ -36,18 +39,14 @@ Meteor.methods({
           username: Meteor.users.findOne(this.userId).username,
           score: 0,
           hand: [],
-          first: [],
-          second: [],
-          third: [],
+          board: [],
         },
         playerTwo: {
           id: '',
           username: '',
           score: 0,
           hand: [],
-          first: [],
-          second: [],
-          third: [],
+          board: [],
         },
         dealer: this.userId,
         maker: '',
@@ -76,10 +75,8 @@ Meteor.methods({
       trump: String,
     });
 
-    let newDoc = doc;
-    if (doc.playerTwo.id != '') {
-      newDoc.playerTwo.username = Meteor.users.findOne(doc.playerTwo.id).username;
-    }
+    const newDoc = doc;
+    if (doc.playerTwo.id !== '') newDoc.playerTwo.username = Meteor.users.findOne(doc.playerTwo.id).username
 
     try {
       const gameId = newDoc._id;

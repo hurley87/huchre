@@ -12,7 +12,6 @@ const joinGame = (game, history) => {
   let newGame = game;
   newGame.playerTwo.id = Meteor.userId();
   newGame.status = "invite-accepted";
-  console.log(newGame);
   Meteor.call('games.update', newGame, (error) => {
     if (error) {
       Bert.alert(error.reason, 'danger');

@@ -36,10 +36,6 @@ export default withTracker(() => {
     ],
   }).fetch();
 
-  console.log('whooaaaa');
-  console.log(GamesCollection.find({
-  }).fetch())
-
   return {
     loading: !subscription.ready(),
     openLength,
