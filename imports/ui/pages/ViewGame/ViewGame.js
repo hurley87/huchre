@@ -291,15 +291,103 @@ const handleOrderPickup = (currentState) => {
 
 const handleOrderPass = (currentState) => {
   const newState = currentState;
-  newState.status = 'make';
+  newState.status = 'pickup';
   newState.currentPlayer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerOne.id
   updateGame(newState);
 }
 
+const renderPickup = currentState => (currentState ? (
+  <Row className="text-center">
+    <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer</h5>
+    {
+      currentState.currentPlayer === Meteor.userId() ?
+        Meteor.userId() === currentState.playerOne.id ? pickupCurrentUi(currentState.playerOne, currentState) : pickupCurrentUi(currentState.playerTwo, currentState)
+        :
+        Meteor.userId() === currentState.playerOne.id ? pickupOpposingUi(currentState.playerOne, currentState) : pickupOpposingUi(currentState.playerTwo, currentState)
+    }
+    <br />
+    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
+  </Row>
+) : <Redirect to="/games" />);
+
+const pickupCurrentUi = (player, currentState) => (player ? (
+  <div>
+    Do you want to pick up the {currentState.deck[0].suit + currentState.deck[0].value} or pass?
+    {
+      player.hand.map((card, i) => {
+        return (<div key={i}> {card.suit + card.value} </div>);
+      })
+    }
+    <Button onClick={() => handlePickup(currentState, 'make')}>Make</Button>
+    <Button onClick={() => handlePickup(currentState, 'pass')}>Pass</Button>
+  </div>
+) : null)
+
+const pickupOpposingUi = (player, currentState) => (player ? (
+  <div>
+    Waiting on opposing player to pick it up or not
+    {
+      player.hand.map((card, i) => {
+        return (<div key={i}> {card.suit + card.value} </div>);
+      })
+    }
+  </div>
+) : null)
+
+const handlePickup = (currentState, move) => {
+  const newState = currentState;
+  if (move === 'pass') {
+    newState.status = 'make';
+    newState.currentPlayer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerOne.id
+  } else {
+    newState.status = 'pickupDiscard';
+    newState.currentPlayer === newState.playerOne.id ? newState.maker = newState.playerTwo.id : newState.maker = newState.playerOne.id
+    newState.trump = currentState.deck[0].suit
+  }
+  updateGame(newState);
+}
+
+
+const renderPickupDiscard = currentState => (currentState ? (
+  <Row className="text-center">
+    <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer</h5>
+    {
+      currentState.currentPlayer === Meteor.userId() ?
+        Meteor.userId() === currentState.playerOne.id ? pickupDiscardCurrentUi(currentState.playerOne, currentState) : pickupDiscardCurrentUi(currentState.playerTwo, currentState)
+        :
+        Meteor.userId() === currentState.playerOne.id ? pickupDiscardOpposingUi(currentState.playerOne, currentState) : pickupDiscardOpposingUi(currentState.playerTwo, currentState)
+    }
+    <br />
+    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
+  </Row>
+) : <Redirect to="/games" />);
+
+const pickupDiscardCurrentUi = (player, currentState) => (player ? (
+  <div>
+    Please discard a card:
+    {
+      player.hand.map((card, i) => {
+        return (<Button key={i} onClick={() => handleOrderDiscard(currentState, card.suit, card.value)}>{card.suit + card.value}</Button>)
+      })
+    }
+    <Button onClick={() => handleOrderDiscard(currentState, currentState.deck[0].suit, currentState.deck[0].value)}>{currentState.deck[0].suit + currentState.deck[0].value}</Button>
+  </div>
+) : null)
+
+const pickupDiscardOpposingUi = (player, currentState) => (player ? (
+  <div>
+    Waiting on opposing player to discard
+    {
+      player.hand.map((card, i) => {
+        return (<div key={i}> {card.suit + card.value} </div>);
+      })
+    }
+  </div>
+) : null)
+
 const renderMake = currentState => (currentState ? (
   <Row className="text-center">
     <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer</h5>
-    <h5>{currentState.playerOne.id === currentState.maker ? currentState.playerOne.username : currentState.playerTwo.username} made it {currentState.trump}</h5>
     {
       currentState.currentPlayer === Meteor.userId() ?
         Meteor.userId() === currentState.playerOne.id ? makeCurrentUi(currentState.playerOne, currentState) : makeCurrentUi(currentState.playerTwo, currentState)
@@ -334,36 +422,60 @@ const handleMakeSuit = (currentState, suit) => {
 
   if (suit === 'pass') {
     newState.status = 'stickdealer';
-    newState.currentPlayer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerTwo.id
+    newState.currentPlayer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerOne.id
   } else {
     newState.status = 'game';
     newState.trump = suit;
-    if (newState.currentPlayer === newState.playerOne.id) {
-      newState.maker = newState.playerOne.id;
-      newState.currentPlayer = newState.playerTwo.id;
-    } else {
-      newState.maker = newState.playerTwo.id;
-      newState.currentPlayer = newState.playerOne.id;
-    }
+    newState.currentPlayer === newState.playerOne.id ? newState.maker = newState.playerOne.id : newState.maker = newState.playerTwo.id
+    newState.dealer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerOne.id
   }
-  
-  if (newState.currentPlayer === newState.playerOne.id) {
-    newState.maker = newState.playerOne.id;
-    newState.currentPlayer = newState.playerTwo.id;
-  } else {
-    newState.maker = newState.playerTwo.id;
-    newState.currentPlayer = newState.playerOne.id;
-  }
-  newState.trump = newState.deck[0].suit;
-  
   updateGame(newState);
 }
 
 const renderStickDealer = currentState => (currentState ? (
   <Row className="text-center">
-    stickdealer
+    <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer</h5>
+    {
+      currentState.currentPlayer === Meteor.userId() ?
+        Meteor.userId() === currentState.playerOne.id ? stdCurrentUi(currentState.playerOne, currentState) : stdCurrentUi(currentState.playerTwo, currentState)
+        :
+        Meteor.userId() === currentState.playerOne.id ? stdOpposingUi(currentState.playerOne, currentState) : stdOpposingUi(currentState.playerTwo, currentState)
+    }
+    <br />
+    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
+
+const stdCurrentUi = (player, currentState) => (player ? (
+  <div>
+    What suit do you want to std it?
+    {
+      ["H", "S", "C", "D"].map((suit, i) => {
+        return (<Button key={i} onClick={() => handleStdMake(currentState, suit)}>{suit}</Button>);
+      })
+    }
+    Your cards: 
+    {
+      player.hand.map((card, i) => {
+        return (<div key={i}> {card.suit + card.value} </div>);
+      })
+    }
+  </div>
+) : null)
+
+const stdOpposingUi = (player, currentState) => (player ? (
+  <div>
+    Waiting on opposing player to make it.
+  </div>
+) : null)
+
+const handleStdMake = (currentState, suit) => {
+  const newState = currentState;
+  newState.status = 'game';
+  newState.trump = suit;
+  newState.dealer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerOne.id
+  updateGame(newState);
+}
 
 const renderAccepted = currentState => (currentState ? (
   <Row className="text-center">
@@ -388,9 +500,11 @@ const ViewGame = ({
       currentState.status === 'deal' ? renderDeal(currentState) :
         currentState.status === 'order' ? renderOrder(currentState) :
           currentState.status === 'orderDiscard'? renderOrderDiscard(currentState) :
-          currentState.status === 'make' ? renderMake(currentState) :
-            currentState.status === 'stickdealer' ? renderStickDealer(currentState) :
-              renderTable(currentState) : <Loading />
+            currentState.status === 'pickup' ? renderPickup(currentState) : 
+              currentState.status === 'pickupDiscard' ? renderPickupDiscard(currentState) :
+                currentState.status === 'make' ? renderMake(currentState) :
+                  currentState.status === 'stickdealer' ? renderStickDealer(currentState) :
+                    renderTable(currentState) : <Loading />
 );
 
 ViewGame.defaultProps = {
