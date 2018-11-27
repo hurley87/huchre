@@ -21,6 +21,8 @@ Meteor.methods({
         cards.push({
           suit: suits[i],
           value: count,
+          view: true,
+          hover: false,
         });
       }
       count += 1;
@@ -29,6 +31,8 @@ Meteor.methods({
     cards.push({
       suit: 'J',
       value: 15,
+      view: true,
+      hover: false,
     });
 
     try {
@@ -39,14 +43,18 @@ Meteor.methods({
           username: Meteor.users.findOne(this.userId).username,
           score: 0,
           hand: [],
-          board: [],
+          first: [],
+          second: [],
+          third: [],
         },
         playerTwo: {
           id: '',
           username: '',
           score: 0,
           hand: [],
-          board: [],
+          first: [],
+          second: [],
+          third: [],
         },
         dealer: this.userId,
         maker: '',
