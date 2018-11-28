@@ -59,8 +59,6 @@ const OpenGames = ({
 OpenGames.propTypes = {
   loading: PropTypes.bool.isRequired,
   games: PropTypes.arrayOf(PropTypes.object).isRequired,
-  match: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
 };
 
 export default withTracker(() => {
@@ -68,7 +66,6 @@ export default withTracker(() => {
   const games = GamesCollection.find({
     'playerTwo.id': '', 
   }).fetch();
-  console.log(games)
   return {
     loading: !subscription.ready(),
     games,

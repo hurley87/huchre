@@ -42,6 +42,7 @@ Meteor.methods({
           id: this.userId,
           username: Meteor.users.findOne(this.userId).username,
           score: 0,
+          trick: 0,
           hand: [],
           first: [],
           second: [],
@@ -51,6 +52,7 @@ Meteor.methods({
           id: '',
           username: '',
           score: 0,
+          trick: 0,
           hand: [],
           first: [],
           second: [],
@@ -84,7 +86,7 @@ Meteor.methods({
     });
 
     const newDoc = doc;
-    if (doc.playerTwo.id !== '') newDoc.playerTwo.username = Meteor.users.findOne(doc.playerTwo.id).username
+    if (doc.playerTwo.id !== '') newDoc.playerTwo.username = Meteor.users.findOne(doc.playerTwo.id).username;
 
     try {
       const gameId = newDoc._id;
