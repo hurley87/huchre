@@ -67,7 +67,7 @@ class NewGame extends React.Component {
 }
 
 NewGame.defaultProps = {
-  doc: { limit: 100 },
+  doc: { limit: 10 },
 };
 
 NewGame.propTypes = {

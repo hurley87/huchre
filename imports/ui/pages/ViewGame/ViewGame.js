@@ -154,7 +154,7 @@ const convertCard = (trump, card) => {
   return card;
 };
 
-const hasSuitToFollow = (player, suitToFollow) => {
+const hasSuitToFollow = (player, suitToFollow, trump) => {
   const cardsToCheck = [];
   const playableCards = [];
   for (let i = 0; i < player.hand.length; i++) cardsToCheck.push(player.hand[i]);
@@ -163,7 +163,7 @@ const hasSuitToFollow = (player, suitToFollow) => {
   player.third.length > 0 ? cardsToCheck.push(player.third[0]) : null;
 
   for (let i = 0; i < cardsToCheck.length; i++) {
-    if (cardsToCheck[i].suit === suitToFollow) {
+    if (convertCard(trump, cardsToCheck[i]).suit === suitToFollow) {
       playableCards.push(cardsToCheck[i]);
     }
   }
@@ -171,11 +171,11 @@ const hasSuitToFollow = (player, suitToFollow) => {
 };
 
 const followsuit = (player, currentState, card) => {
-  const cardPlayed = currentState.deck[currentState.deck.length - 1]
+  const cardPlayed = currentState.deck[currentState.deck.length - 1];
   const handCard = convertCard(currentState.trump, card);
   const cardLead = convertCard(currentState.trump, cardPlayed);
   const suitToFollow = cardLead.suit;
-  const playableCards = hasSuitToFollow(player, suitToFollow);
+  const playableCards = hasSuitToFollow(player, suitToFollow, currentState.trump);
   let bestCard = { suit: 'D', value: 1 };
 
   for (let i = 0; i < playableCards.length; i++) {
@@ -188,7 +188,6 @@ const followsuit = (player, currentState, card) => {
   if (currentState.handCount % 2 === 0) {
     return false;
   } else if (playableCards.length > 0) {
-
     if (cardPlayed.suit === 'J') {
       if (handCard.suit === bestCard.suit && handCard.value === bestCard.value) {
         return false;
@@ -488,7 +487,7 @@ const handleOrderDiscard = (currentState, suit, value) => {
   }
 
   newState.dealer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerOne.id;
-  newState.trump = newState.deck[0].suit;
+  if (newState.deck[0].suit !== 'J') newState.trump = newState.deck[0].suit;
   newState.status = 'game';
   updateGame(newState);
 };
@@ -616,13 +615,40 @@ const renderPickupDiscard = currentState => (currentState ? (
   </Row>
 ) : <Redirect to="/games" />);
 
+
+const handleMakeTrump = (currentState, trump) => {
+  const newState = currentState;
+  newState.trump = trump;
+  updateGame(newState);
+}
+
 const pickupDiscardCurrentUi = (player, currentState) => (player ? (
   <div>
-    You just made it {currentState.deck[0].suit}. Please discard a card:
     {
-      player.hand.map((card, i) => (<Button key={i} onClick={() => handleOrderDiscard(currentState, card.suit, card.value)}>{card.suit + card.value}</Button>))
+      currentState.trump === 'J' ? (
+        <div>
+          Make it trump!
+
+          {
+            ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeTrump(currentState, suit)}>{suit}</Button>))
+          }
+          <div>
+          {
+            player.hand.map((card, i) => (<div key={i}>{card.suit + card.value}</div>))
+          }
+            <div>J15</div>
+          </div>
+        </div>
+      ) : (
+        <div>
+          You just made it {currentState.trump}. Please discard a card:
+          {
+            player.hand.map((card, i) => (<Button key={i} onClick={() => handleOrderDiscard(currentState, card.suit, card.value)}>{card.suit + card.value}</Button>))
+          }
+          <Button onClick={() => handleOrderDiscard(currentState, currentState.deck[0].suit, currentState.deck[0].value)}>{currentState.deck[0].suit + currentState.deck[0].value}</Button>
+        </div>
+      )
     }
-    <Button onClick={() => handleOrderDiscard(currentState, currentState.deck[0].suit, currentState.deck[0].value)}>{currentState.deck[0].suit + currentState.deck[0].value}</Button>
   </div>
 ) : null);
 
@@ -652,6 +678,12 @@ const renderMake = currentState => (currentState ? (
 const makeCurrentUi = (player, currentState) => (player ? (
   <div>
     What suit do you want to make it?
+    <div>
+      Your hand: 
+      {
+       player.hand.map((card, i) => (<div key={i}> {card.suit + card.value} </div>))
+      }
+    </div>
     {
       ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeSuit(currentState, suit)}>{suit}</Button>))
     }
@@ -782,7 +814,7 @@ const renderPlayerTwoOver = (currentState) => {
 
   } else {
     if (currentState.maker === currentState.playerTwo.id) {
-      const points = currentState.playerOne.trick - currentState.playerTwo.trick;
+      const points = (currentState.playerOne.trick - currentState.playerTwo.trick)*2;
       return (
         <h5>{currentState.playerOne.username} wins and earns {points} {points == 1 ? 'point' : 'points'}</h5>
       )
@@ -813,7 +845,25 @@ const nextHand = (currentState) => {
     }
   }
 
-  // TODO: Insert Hand into collection
+  // keep track of each hand
+  const doc = {
+    dealer: currentState.dealer,
+    deck: currentState.deck,
+    handCount: currentState.handCount,
+    maker: currentState.maker,
+    playerOneScore: currentState.playerOne.trick,
+    playerOneId: currentState.playerOne.id,
+    playerTwoScore: currentState.playerTwo.trick,
+    playerTwoId: currentState.playerTwo.id,
+    trump: currentState.trump,
+  };
+  Meteor.call('hands.insert', doc, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      console.log('hand inserted');
+    }
+  });
 
   if (newState.dealer === newState.playerOne.id) {
     newState.currentPlayer = newState.playerTwo.id;
@@ -830,7 +880,11 @@ const nextHand = (currentState) => {
   newState.handCount = 0;
   // TODO: add view when game is over! insert or update player profiles at that point
   newState.status = 'deal';
-  console.log(newState);
+  if (newState.playerOne.score >= newState.limit || newState.playerTwo.score >= newState.limit) {
+    newState.status = 'final';
+  } else {
+    newState.status = 'deal';
+  }
   updateGame(newState);
 }
 
@@ -840,6 +894,49 @@ const renderOver = currentState => (currentState && currentState.playerOne ? (
       Meteor.userId() === currentState.playerOne.id ? renderPlayerOneOver(currentState) : renderPlayerTwoOver(currentState)
     }
     <Button onClick={() => nextHand(currentState)}>Next Hand</Button>
+  </Row>
+) : <Redirect to="/games" />);
+
+const endFinal = (currentState) => {
+  const newState = currentState;
+  const p1 = {
+    username: newState.playerOne.username,
+    score: newState.playerOne.score,
+    playerId: newState.playerOne.id,
+  }
+  const p2 = {
+    username: newState.playerTwo.username,
+    score: newState.playerTwo.score,
+    playerId: newState.playerTwo.id,
+  }
+  Meteor.call('profiles.insert', p1, (error) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      console.log('player1 inserted');
+      Meteor.call('profiles.insert', p2, (error) => {
+        if (error) {
+          Bert.alert(error.reason, 'danger');
+        } else {
+          console.log('player2 inserted');
+          Meteor.call('games.remove', currentState._id, (error) => {
+            if (error) {
+              Bert.alert(error.reason, 'danger');
+            } else {
+              console.log('game over');
+            }
+          });
+        }
+      });
+    }
+  });
+  console.log(newState);
+}
+
+const renderFinal = currentState => (currentState && currentState.playerOne ? (
+  <Row className="text-center">
+    Game is over!
+    <Button onClick={() => endFinal(currentState)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
@@ -856,7 +953,8 @@ const ViewGame = ({
                 currentState.status === 'make' ? renderMake(currentState) :
                   currentState.status === 'stickdealer' ? renderStickDealer(currentState) :
                     currentState.status === 'game' ? renderTable(currentState) :
-                      renderOver(currentState) : <Loading />
+                      currentState.status === 'over' ? renderOver(currentState) :
+                        renderFinal(currentState) : <Loading />
 );
 
 ViewGame.defaultProps = {
