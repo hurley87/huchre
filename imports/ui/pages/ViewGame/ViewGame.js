@@ -10,6 +10,19 @@ import Games from '../../../api/Games/Games';
 import Loading from '../../components/Loading/Loading';
 import InviteFriend from '../InviteFriend/InviteFriend';
 import _ from 'lodash';
+import './ViewGame.scss';
+
+const renderCard = (suit, value) => {
+  return <img alt="player-card" src={`/${suit}/${value}.png`} height='100' />;
+};
+
+const renderSuit = (suit) => {
+  return <img height='20px' src={`/Suits/${suit}.png`} />
+}
+
+const renderCover = () => {
+  return <img src="/Covers/blue.png" height='100'/>
+}
 
 const endGame = (gameId) => {
   if (confirm('Are you sure you want to end this game?')) {
@@ -70,15 +83,13 @@ const handleDeal = (game) => {
 const renderTable = currentState => (currentState && currentState.playerOne ? (
   <Row className="text-center">
     <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer.</h5>
-    <h5>{currentState.playerOne.id === currentState.make ? currentState.playerOne.username : currentState.playerTwo.username} made it {currentState.trump}</h5>
+    <h5>{currentState.playerOne.id === currentState.make ? currentState.playerOne.username : currentState.playerTwo.username} made it {renderSuit(currentState.trump)}</h5>
     {
       currentState.currentPlayer === Meteor.userId() ?
         Meteor.userId() === currentState.playerOne.id ? tableCurrentUi(currentState.playerOne, currentState) : tableCurrentUi(currentState.playerTwo, currentState)
         :
         Meteor.userId() === currentState.playerOne.id ? tableOpposingUi(currentState.playerOne, currentState) : tableOpposingUi(currentState.playerTwo, currentState)
     }
-    <br />
-    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
@@ -88,19 +99,22 @@ const tableTopUi = (player, currentState) => (player ? (
       <h5>Tricks: {player.trick}</h5>
       <h5>Score: {player.score}</h5>
       {
-        player.hand.map((card, i) => (<span key={i}>?</span>))
+        player.hand.map((card, i) => (<span key={i}>{renderCover()}</span>))
       }
     </div>
     <div>
       <Row>
         <Col xs={4}>
-          <span>{player.first.length === 0 ? null : player.first[0].suit + player.first[0].value}</span>
+          {player.first.length === 0 ? null : renderCard(player.first[0].suit, player.first[0].value)}
+          {player.first.length === 2 ? renderCover() : null}
         </Col>
         <Col xs={4}>
-          <span>{player.second.length === 0 ? null : player.second[0].suit + player.second[0].value}</span>
+          {player.second.length === 0 ? null : renderCard(player.second[0].suit, player.second[0].value)}
+          {player.second.length === 2 ? renderCover() : null}
         </Col>
         <Col xs={4}>
-          <span>{player.third.length === 0 ? null : player.third[0].suit + player.third[0].value}</span>
+          {player.third.length === 0 ? null : renderCard(player.third[0].suit, player.third[0].value)}
+          {player.third.length === 2 ? renderCover() : null}
         </Col>
       </Row>
     </div>
@@ -214,7 +228,7 @@ const tableCurrentUi = (player, currentState) => (player ? (
     <Row>
       <Col xs={12}>
         {
-        currentState.handCount === 0 || currentState.handCount % 2 === 0 ? null : currentState.deck[currentState.deck.length - 1].suit + currentState.deck[currentState.deck.length - 1].value
+          currentState.handCount === 0 || currentState.handCount % 2 === 0 ? null : renderCard(currentState.deck[currentState.deck.length - 1].suit, currentState.deck[currentState.deck.length - 1].value)
       }
       </Col>
     </Row>
@@ -223,24 +237,26 @@ const tableCurrentUi = (player, currentState) => (player ? (
     <br />
     <Row>
       <Col xs={4}>
-        {player.first.length === 0 ? null : <Button disabled={followsuit(player, currentState, player.first[0])} className={player.first.length === 0 ? 'another-card' : null} onClick={() => handlePlayCard(currentState, player, player.first[0], 'first')}>{player.first[0].suit + player.first[0].value}</Button>}
+        {player.first.length === 0 ? null : <Button disabled={followsuit(player, currentState, player.first[0])} className={player.first.length === 0 ? 'another-card' : null} onClick={() => handlePlayCard(currentState, player, player.first[0], 'first')}>{renderCard(player.first[0].suit, player.first[0].value)}</Button>}
+        {player.first.length === 2 ? renderCover() : null}
       </Col>
       <Col xs={4}>
-        {player.second.length === 0 ? null : <Button disabled={followsuit(player, currentState, player.second[0])} className={player.second.length === 0 ? 'another-card' : null} onClick={() => handlePlayCard(currentState, player, player.second[0], 'second')}>{player.second[0].suit + player.second[0].value}</Button>}
+        {player.second.length === 0 ? null : <Button disabled={followsuit(player, currentState, player.second[0])} className={player.second.length === 0 ? 'another-card' : null} onClick={() => handlePlayCard(currentState, player, player.second[0], 'second')}>{renderCard(player.second[0].suit, player.second[0].value)}</Button>}
+        {player.second.length === 2 ? renderCover() : null}
       </Col>
       <Col xs={4}>
-        {player.third.length === 0 ? null : <Button disabled={followsuit(player, currentState, player.third[0])} className={player.third.length === 0 ? 'another-card' : null} onClick={() => handlePlayCard(currentState, player, player.third[0], 'third')}>{player.third[0].suit + player.third[0].value}</Button>}
+        {player.third.length === 0 ? null : <Button disabled={followsuit(player, currentState, player.third[0])} className={player.third.length === 0 ? 'another-card' : null} onClick={() => handlePlayCard(currentState, player, player.third[0], 'third')}>{renderCard(player.third[0].suit, player.third[0].value)}</Button>}
+        {player.third.length === 2 ? renderCover() : null}
       </Col>
     </Row>
     <br />
     <div>
-    current user hand:
     {
-        player.hand.map((card, i) => (<Button key={i} disabled={followsuit(player, currentState, card)} onClick={() => handlePlayCard(currentState, player, card, 'hand')}>{card.suit + card.value}</Button>))
+        player.hand.map((card, i) => (<Button key={i} disabled={followsuit(player, currentState, card)} onClick={() => handlePlayCard(currentState, player, card, 'hand')}>{renderCard(card.suit, card.value)}</Button>))
     }
-      <h5>Tricks: {player.trick}</h5>
-      <h5>Score: {player.score}</h5>
     </div>
+    <h5>Tricks: {player.trick}</h5>
+    <h5>Score: {player.score}</h5>
   </div>
 ) : null);
 
@@ -255,7 +271,7 @@ const tableOpposingUi = (player, currentState) => (player ? (
     <Row>
       <Col xs={12}>
         {
-          currentState.handCount === 0 || currentState.handCount % 2 === 0 ? null : currentState.deck[currentState.deck.length - 1].suit + currentState.deck[currentState.deck.length - 1].value
+          currentState.handCount === 0 || currentState.handCount % 2 === 0 ? null : renderCard(currentState.deck[currentState.deck.length - 1].suit, currentState.deck[currentState.deck.length - 1].value)
         }
       </Col>
     </Row>
@@ -264,21 +280,23 @@ const tableOpposingUi = (player, currentState) => (player ? (
     <br />
     <Row>
       <Col xs={4}>
-        <span>{player.first.length === 0 ? null : player.first[0].suit + player.first[0].value}</span>
+        {player.first.length === 0 ? null : renderCard(player.first[0].suit, player.first[0].value)}
+        {player.first.length === 2 ? renderCover() : null}
       </Col>
       <Col xs={4}>
-        <span>{player.second.length === 0 ? null : player.second[0].suit + player.second[0].value}</span>
+        {player.second.length === 0 ? null : renderCard(player.second[0].suit, player.second[0].value)}
+        {player.second.length === 2 ? renderCover() : null}
       </Col>
       <Col xs={4}>
-        <span>{player.third.length === 0 ? null : player.third[0].suit + player.third[0].value}</span>
+        {player.third.length === 0 ? null : renderCard(player.third[0].suit, player.third[0].value)}
+        {player.third.length === 2 ? renderCover() : null}
       </Col>
     </Row><br />
     <div>
-    current user hand:
-    {
-        player.hand.map((card, i) => (<span key={i}>{card.suit + card.value}</span>))
-      }
+    { player.hand.map(card => renderCard(card.suit, card.value)) }
     </div>
+    <h5>Tricks: {player.trick}</h5>
+    <h5>Score: {player.score}</h5>
   </div>
 ) : null);
 
@@ -506,17 +524,19 @@ const renderOrder = currentState => (currentState ? (
       :
         Meteor.userId() === currentState.playerOne.id ? orderOpposingUi(currentState.playerOne, currentState) : orderOpposingUi(currentState.playerTwo, currentState)
     }
-    <br />
-    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
 const orderCurrentUi = (player, currentState) => (player ? (
   <div>
     {
-      player.hand.map((card, i) => (<div key={i}> {card.suit + card.value} </div>))
+      player.hand.map(card => renderCard(card.suit, card.value))
     }
-    Do you want to order up the {currentState.deck[0].suit + currentState.deck[0].value} or pass?
+
+    <div>
+      Do you want to order up the {renderCard(currentState.deck[0].suit, currentState.deck[0].value)} or pass?
+    </div>
+    
     <Button onClick={() => handleOrderPickup(currentState)}>Order</Button>
     <Button onClick={() => handleOrderPass(currentState)}>Pass</Button>
   </div>
@@ -524,11 +544,15 @@ const orderCurrentUi = (player, currentState) => (player ? (
 
 const orderOpposingUi = (player, currentState) => (player ? (
   <div>
-    {currentState.playerTwo.username} has option to order {currentState.deck[0].suit + currentState.deck[0].value}
-    <div>your hand:</div>
-    {
-      currentState.playerOne.hand.map((card, i) => <div key={i}> {card.suit + card.value} </div>)
-    }
+    <div>
+      {
+        player.hand.map(card => renderCard(card.suit, card.value))
+      }
+    </div>
+    <br />
+    <div>
+      {currentState.playerTwo.username} has option to order {renderCard(currentState.deck[0].suit, currentState.deck[0].value)}
+    </div>
   </div>
 ) : null);
 
@@ -569,10 +593,14 @@ const renderPickup = currentState => (currentState ? (
 
 const pickupCurrentUi = (player, currentState) => (player ? (
   <div>
-    Do you want to pick up the {currentState.deck[0].suit + currentState.deck[0].value} or pass?
-    {
-      player.hand.map((card, i) => (<div key={i}> {card.suit + card.value} </div>))
-    }
+    <div>
+      {
+        player.hand.map(card => renderCard(card.suit, card.value))
+      }
+    </div>
+    <div>
+      Do you want to pick up the {renderCard(currentState.deck[0].suit, currentState.deck[0].value)} or pass?
+    </div>
     <Button onClick={() => handlePickup(currentState, 'make')}>Make</Button>
     <Button onClick={() => handlePickup(currentState, 'pass')}>Pass</Button>
   </div>
@@ -580,10 +608,14 @@ const pickupCurrentUi = (player, currentState) => (player ? (
 
 const pickupOpposingUi = (player, currentState) => (player ? (
   <div>
-    Waiting on opposing player to pick it up or not
-    {
-      player.hand.map((card, i) => (<div key={i}> {card.suit + card.value} </div>))
-    }
+    <div>
+      {
+        player.hand.map(card => renderCard(card.suit, card.value))
+      }
+    </div>
+    <div>
+      Waiting on opposing player to pick it up or not
+    </div>
   </div>
 ) : null);
 
@@ -611,7 +643,6 @@ const renderPickupDiscard = currentState => (currentState ? (
         Meteor.userId() === currentState.playerOne.id ? pickupDiscardOpposingUi(currentState.playerOne, currentState) : pickupDiscardOpposingUi(currentState.playerTwo, currentState)
     }
     <br />
-    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
@@ -627,25 +658,35 @@ const pickupDiscardCurrentUi = (player, currentState) => (player ? (
     {
       currentState.trump === 'J' ? (
         <div>
-          Make it trump!
-
-          {
-            ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeTrump(currentState, suit)}>{suit}</Button>))
-          }
           <div>
-          {
-            player.hand.map((card, i) => (<div key={i}>{card.suit + card.value}</div>))
-          }
-            <div>J15</div>
+            {
+              player.hand.map(card => renderCard(card.suit, card.value))
+            }
+          </div>
+          <div>
+            <h5>Make it trump!</h5>
+            {
+              ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeTrump(currentState, suit)}>{renderSuit(suit)}</Button>))
+            }
           </div>
         </div>
       ) : (
         <div>
-          You just made it {currentState.trump}. Please discard a card:
-          {
-            player.hand.map((card, i) => (<Button key={i} onClick={() => handleOrderDiscard(currentState, card.suit, card.value)}>{card.suit + card.value}</Button>))
-          }
-          <Button onClick={() => handleOrderDiscard(currentState, currentState.deck[0].suit, currentState.deck[0].value)}>{currentState.deck[0].suit + currentState.deck[0].value}</Button>
+          <div>
+              You just made it {renderSuit(currentState.trump)}.
+          </div>
+          <br />
+          <div>
+              {
+                player.hand.map((card, i) => (<Button key={i} onClick={() => handleOrderDiscard(currentState, card.suit, card.value)}>{renderCard(card.suit, card.value)}</Button>))
+              }
+              <Button onClick={() => handleOrderDiscard(currentState, currentState.deck[0].suit, currentState.deck[0].value)}>{renderCard(currentState.deck[0].suit, currentState.deck[0].value)}</Button>
+          </div>
+          <br />
+          <h5>Pick a card to discard</h5>
+            
+
+            
         </div>
       )
     }
@@ -654,10 +695,14 @@ const pickupDiscardCurrentUi = (player, currentState) => (player ? (
 
 const pickupDiscardOpposingUi = (player, currentState) => (player ? (
   <div>
-    Waiting on opposing player to discard
-    {
-      player.hand.map((card, i) => (<div key={i}> {card.suit + card.value} </div>))
-    }
+    <div>
+      {
+        player.hand.map(card => renderCard(card.suit, card.value))
+      }
+      <br />
+      <h5>Waiting on {player.id === currentState.playerOne.id ? currentState.playerOne.username : currentState.playerTwo.username } to discard</h5>
+    </div>
+
   </div>
 ) : null);
 
@@ -670,24 +715,24 @@ const renderMake = currentState => (currentState ? (
         :
         Meteor.userId() === currentState.playerOne.id ? makeOpposingUi(currentState.playerOne, currentState) : makeOpposingUi(currentState.playerTwo, currentState)
     }
-    <br />
-    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
-  </Row>
+    </Row>
 ) : <Redirect to="/games" />);
 
 const makeCurrentUi = (player, currentState) => (player ? (
   <div>
-    What suit do you want to make it?
     <div>
-      Your hand: 
       {
-       player.hand.map((card, i) => (<div key={i}> {card.suit + card.value} </div>))
+        player.hand.map(card => renderCard(card.suit, card.value))
       }
     </div>
-    {
-      ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeSuit(currentState, suit)}>{suit}</Button>))
-    }
-    <Button onClick={() => handleMakeSuit(currentState, 'pass')}>pass</Button>
+    <br />
+    <div>
+      <h5>What suit do you want to make it?</h5>
+      {
+        ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeSuit(currentState, suit)}>{renderSuit(suit)}</Button>))
+      }
+      <Button onClick={() => handleMakeSuit(currentState, 'pass')}>pass</Button>
+    </div>
   </div>
 ) : null);
 
@@ -728,14 +773,18 @@ const renderStickDealer = currentState => (currentState ? (
 
 const stdCurrentUi = (player, currentState) => (player ? (
   <div>
-    What suit do you want to std it?
-    {
-      ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleStdMake(currentState, suit)}>{suit}</Button>))
-    }
-    Your cards:
-    {
-      player.hand.map((card, i) => (<div key={i}> {card.suit + card.value} </div>))
-    }
+    <div>
+      {
+        player.hand.map(card => renderCard(card.suit, card.value))
+      }
+    </div>
+    <br />
+    <div>
+      <h5>What suit do you want to make it?</h5>
+      {
+        ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleStdMake(currentState, suit)}>{renderSuit(suit)}</Button>))
+      }
+    </div>
   </div>
 ) : null);
 
