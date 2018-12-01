@@ -1,57 +1,41 @@
 @import '../../stylesheets/mixins';
 @import '../../stylesheets/colors';
 
-.Index {
-  padding: 20px;
-  background: $cb-blue;
-  text-align: center;
-  border-radius: 3px;
+.play-card {
+  border: 1px solid #eee;
+  margin: 2px;
+}
+
+.btn {
+  padding: 0px;
+  margin: 2px;
+}
+
+.top {
+  height: 210px;
+}
+
+.view {
+  height: 110px;
+}
+
+.bottom {
+  height: 200px;
+}
+
+.button {
+  padding: 5px 15px;
+  background-color: #2ecc71;
   color: #fff;
+  border-radius: 3px;
+  border: none;
 
-  img {
-    width: 100px;
-    height: auto;
-  }
+}
 
-  h1 {
-    font-size: 28px;
-  }
-
-  p {
-    font-size: 18px;
-    color: lighten($cb-blue, 25%);
-  }
-
-  > div {
-    display: inline-block;
-    margin: 10px 0 0;
-
-    .btn:first-child {
-      margin-right: 10px;
-    }
-
-    .btn {
-      border: none;
-    }
-  }
-
-  footer {
-    margin: 20px -20px -20px;
-    border-top: 1px solid darken($cb-blue, 10%);
-    padding: 20px;
-
-    p {
-      font-size: 14px;
-      line-height: 22px;
-      color: lighten($cb-blue, 35%);
-      margin: 0;
-    }
-
-    p a {
-      color: lighten($cb-blue, 35%);
-      text-decoration: underline;
-    }
-  }
+.button:hover {
+  background-color: #2ecc71;
+  color: #fff;
+  opacity: 0.8;
 }
 
 @include breakpoint(tablet) {

@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable react/display-name */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -12,17 +13,11 @@ import InviteFriend from '../InviteFriend/InviteFriend';
 import _ from 'lodash';
 import './ViewGame.scss';
 
-const renderCard = (suit, value) => {
-  return <img alt="player-card" src={`/${suit}/${value}.png`} height='100' />;
-};
+const renderCard = (suit, value) => <img className="play-card" alt="player-card" src={`/${suit}/${value}.png`} height="100" />;
 
-const renderSuit = (suit) => {
-  return <img height='20px' src={`/Suits/${suit}.png`} />
-}
+const renderSuit = suit => <img height="20px" src={`/Suits/${suit}.png`} />;
 
-const renderCover = () => {
-  return <img src="/Covers/blue.png" height='100'/>
-}
+const renderCover = () => <img className="play-card" src="/Covers/blue.png" height="100" />;
 
 const endGame = (gameId) => {
   if (confirm('Are you sure you want to end this game?')) {
@@ -82,44 +77,16 @@ const handleDeal = (game) => {
 
 const renderTable = currentState => (currentState && currentState.playerOne ? (
   <Row className="text-center">
-    <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer.</h5>
-    <h5>{currentState.playerOne.id === currentState.make ? currentState.playerOne.username : currentState.playerTwo.username} made it {renderSuit(currentState.trump)}</h5>
     {
-      currentState.currentPlayer === Meteor.userId() ?
-        Meteor.userId() === currentState.playerOne.id ? tableCurrentUi(currentState.playerOne, currentState) : tableCurrentUi(currentState.playerTwo, currentState)
-        :
-        Meteor.userId() === currentState.playerOne.id ? tableOpposingUi(currentState.playerOne, currentState) : tableOpposingUi(currentState.playerTwo, currentState)
+      currentState.handCount === 0 ? null :
+        currentState.handCount % 2 === 0 ? (
+          <p>{renderCard(currentState.deck[currentState.deck.length - 2].suit, currentState.deck[currentState.deck.length - 2].value)} lead {renderCard(currentState.deck[currentState.deck.length - 1].suit, currentState.deck[currentState.deck.length - 1].value)} played</p>
+        ) : (
+          <p>{renderCard(currentState.deck[currentState.deck.length - 1].suit, currentState.deck[currentState.deck.length - 1].value)} lead</p>
+        )
     }
   </Row>
 ) : <Redirect to="/games" />);
-
-const tableTopUi = (player, currentState) => (player ? (
-  <div>
-    <div>
-      <h5>Tricks: {player.trick}</h5>
-      <h5>Score: {player.score}</h5>
-      {
-        player.hand.map((card, i) => (<span key={i}>{renderCover()}</span>))
-      }
-    </div>
-    <div>
-      <Row>
-        <Col xs={4}>
-          {player.first.length === 0 ? null : renderCard(player.first[0].suit, player.first[0].value)}
-          {player.first.length === 2 ? renderCover() : null}
-        </Col>
-        <Col xs={4}>
-          {player.second.length === 0 ? null : renderCard(player.second[0].suit, player.second[0].value)}
-          {player.second.length === 2 ? renderCover() : null}
-        </Col>
-        <Col xs={4}>
-          {player.third.length === 0 ? null : renderCard(player.third[0].suit, player.third[0].value)}
-          {player.third.length === 2 ? renderCover() : null}
-        </Col>
-      </Row>
-    </div>
-  </div>
-) : null);
 
 const convertCard = (trump, card) => {
   if (card.value === 15) {
@@ -199,106 +166,26 @@ const followsuit = (player, currentState, card) => {
     }
   }
 
-  if (currentState.handCount % 2 === 0) {
-    return false;
-  } else if (playableCards.length > 0) {
-    if (cardPlayed.suit === 'J') {
-      if (handCard.suit === bestCard.suit && handCard.value === bestCard.value) {
-        return false;
+  if (currentState.currentPlayer !== player.id || currentState.status !== 'game') {
+    return true;
+  } 
+    if (currentState.handCount % 2 === 0) {
+      return false;
+    } else if (playableCards.length > 0) {
+      if (cardPlayed.suit === 'J') {
+        if (handCard.suit === bestCard.suit && handCard.value === bestCard.value) {
+          return false;
+        }
+        return true;
       }
-      return true;
-    } else {
       if (handCard.suit === cardLead.suit) {
         return false;
       }
       return true;
     }
-  }
-  return false;
+    return false;
+  
 };
-
-const tableCurrentUi = (player, currentState) => (player ? (
-  <div>
-    {
-      currentState.currentPlayer === currentState.playerOne.id ? tableTopUi(currentState.playerTwo, currentState) : tableTopUi(currentState.playerOne, currentState)
-    }
-    <br />
-    <hr />
-    <br />
-    <Row>
-      <Col xs={12}>
-        {
-          currentState.handCount === 0 || currentState.handCount % 2 === 0 ? null : renderCard(currentState.deck[currentState.deck.length - 1].suit, currentState.deck[currentState.deck.length - 1].value)
-      }
-      </Col>
-    </Row>
-    <br />
-    <hr />
-    <br />
-    <Row>
-      <Col xs={4}>
-        {player.first.length === 0 ? null : <Button disabled={followsuit(player, currentState, player.first[0])} className={player.first.length === 0 ? 'another-card' : null} onClick={() => handlePlayCard(currentState, player, player.first[0], 'first')}>{renderCard(player.first[0].suit, player.first[0].value)}</Button>}
-        {player.first.length === 2 ? renderCover() : null}
-      </Col>
-      <Col xs={4}>
-        {player.second.length === 0 ? null : <Button disabled={followsuit(player, currentState, player.second[0])} className={player.second.length === 0 ? 'another-card' : null} onClick={() => handlePlayCard(currentState, player, player.second[0], 'second')}>{renderCard(player.second[0].suit, player.second[0].value)}</Button>}
-        {player.second.length === 2 ? renderCover() : null}
-      </Col>
-      <Col xs={4}>
-        {player.third.length === 0 ? null : <Button disabled={followsuit(player, currentState, player.third[0])} className={player.third.length === 0 ? 'another-card' : null} onClick={() => handlePlayCard(currentState, player, player.third[0], 'third')}>{renderCard(player.third[0].suit, player.third[0].value)}</Button>}
-        {player.third.length === 2 ? renderCover() : null}
-      </Col>
-    </Row>
-    <br />
-    <div>
-    {
-        player.hand.map((card, i) => (<Button key={i} disabled={followsuit(player, currentState, card)} onClick={() => handlePlayCard(currentState, player, card, 'hand')}>{renderCard(card.suit, card.value)}</Button>))
-    }
-    </div>
-    <h5>Tricks: {player.trick}</h5>
-    <h5>Score: {player.score}</h5>
-  </div>
-) : null);
-
-const tableOpposingUi = (player, currentState) => (player ? (
-  <div>
-    {
-      currentState.currentPlayer === currentState.playerOne.id ? tableTopUi(currentState.playerOne, currentState) : tableTopUi(currentState.playerTwo, currentState)
-    }
-    <br />
-    <hr />
-    <br />
-    <Row>
-      <Col xs={12}>
-        {
-          currentState.handCount === 0 || currentState.handCount % 2 === 0 ? null : renderCard(currentState.deck[currentState.deck.length - 1].suit, currentState.deck[currentState.deck.length - 1].value)
-        }
-      </Col>
-    </Row>
-    <br />
-    <hr />
-    <br />
-    <Row>
-      <Col xs={4}>
-        {player.first.length === 0 ? null : renderCard(player.first[0].suit, player.first[0].value)}
-        {player.first.length === 2 ? renderCover() : null}
-      </Col>
-      <Col xs={4}>
-        {player.second.length === 0 ? null : renderCard(player.second[0].suit, player.second[0].value)}
-        {player.second.length === 2 ? renderCover() : null}
-      </Col>
-      <Col xs={4}>
-        {player.third.length === 0 ? null : renderCard(player.third[0].suit, player.third[0].value)}
-        {player.third.length === 2 ? renderCover() : null}
-      </Col>
-    </Row><br />
-    <div>
-    { player.hand.map(card => renderCard(card.suit, card.value)) }
-    </div>
-    <h5>Tricks: {player.trick}</h5>
-    <h5>Score: {player.score}</h5>
-  </div>
-) : null);
 
 const handlePlayCard = (currentState, player, card, hand) => {
   const newState = currentState;
@@ -451,7 +338,6 @@ const renderDeal = currentState => (currentState ? (
         }
       </Row>
     )}
-    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
@@ -462,32 +348,28 @@ const renderDeal = currentState => (currentState ? (
 
 const renderOrderDiscard = currentState => (currentState ? (
   <Row className="text-center">
-    <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer</h5>
-    <h5>{currentState.playerOne.id === currentState.maker ? currentState.playerOne.username : currentState.playerTwo.username} made it {currentState.trump}</h5>
     {
       currentState.currentPlayer === Meteor.userId() ?
         Meteor.userId() === currentState.playerOne.id ? orderDiscardCurrentUi(currentState.playerOne, currentState) : orderDiscardCurrentUi(currentState.playerTwo, currentState)
         :
         Meteor.userId() === currentState.playerOne.id ? orderDiscardOpposingUi(currentState.playerOne, currentState) : orderDiscardOpposingUi(currentState.playerTwo, currentState)
     }
-    <br />
-    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
 const orderDiscardCurrentUi = (player, currentState) => (player ? (
   <div>
-    Please discard a card:
+    Discard:
     {
-      player.hand.map((card, i) => (<Button key={i} onClick={() => handleOrderDiscard(currentState, card.suit, card.value)}>{card.suit + card.value}</Button>))
+      player.hand.map((card, i) => (<Button key={i} onClick={() => handleOrderDiscard(currentState, card.suit, card.value)}>{renderCard(card.suit, card.value)}</Button>))
     }
-    <Button onClick={() => handleOrderDiscard(currentState, currentState.deck[0].suit, currentState.deck[0].value)}>{currentState.deck[0].suit + currentState.deck[0].value}</Button>
+    <Button onClick={() => handleOrderDiscard(currentState, currentState.deck[0].suit, currentState.deck[0].value)}>{renderCard(currentState.deck[0].suit, currentState.deck[0].value)}</Button>
   </div>
 ) : null);
 
 const orderDiscardOpposingUi = (player, currentState) => (player ? (
   <div>
-    waiting on
+    You just ordered the {renderCard(currentState.deck[0].suit, currentState.deck[0].value)}
   </div>
 ) : null);
 
@@ -517,7 +399,6 @@ const handleOrderDiscard = (currentState, suit, value) => {
 
 const renderOrder = currentState => (currentState ? (
   <Row className="text-center">
-    <h5>{ currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username } is the dealer.</h5>
     {
       currentState.currentPlayer === Meteor.userId() ?
         Meteor.userId() === currentState.playerOne.id ? orderCurrentUi(currentState.playerOne, currentState) : orderCurrentUi(currentState.playerTwo, currentState)
@@ -529,30 +410,15 @@ const renderOrder = currentState => (currentState ? (
 
 const orderCurrentUi = (player, currentState) => (player ? (
   <div>
-    {
-      player.hand.map(card => renderCard(card.suit, card.value))
-    }
-
-    <div>
-      Do you want to order up the {renderCard(currentState.deck[0].suit, currentState.deck[0].value)} or pass?
-    </div>
-    
-    <Button onClick={() => handleOrderPickup(currentState)}>Order</Button>
-    <Button onClick={() => handleOrderPass(currentState)}>Pass</Button>
+    Do you want to order up the {renderCard(currentState.deck[0].suit, currentState.deck[0].value)} or pass?
+    <Button className='button' onClick={() => handleOrderPickup(currentState)}>Order</Button>
+    <Button className='button' onClick={() => handleOrderPass(currentState)}>Pass</Button>
   </div>
 ) : null);
 
 const orderOpposingUi = (player, currentState) => (player ? (
   <div>
-    <div>
-      {
-        player.hand.map(card => renderCard(card.suit, card.value))
-      }
-    </div>
-    <br />
-    <div>
-      {currentState.playerTwo.username} has option to order {renderCard(currentState.deck[0].suit, currentState.deck[0].value)}
-    </div>
+    {currentState.playerTwo.username} has option to order {renderCard(currentState.deck[0].suit, currentState.deck[0].value)}
   </div>
 ) : null);
 
@@ -579,43 +445,26 @@ const handleOrderPass = (currentState) => {
 
 const renderPickup = currentState => (currentState ? (
   <Row className="text-center">
-    <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer</h5>
     {
       currentState.currentPlayer === Meteor.userId() ?
         Meteor.userId() === currentState.playerOne.id ? pickupCurrentUi(currentState.playerOne, currentState) : pickupCurrentUi(currentState.playerTwo, currentState)
         :
         Meteor.userId() === currentState.playerOne.id ? pickupOpposingUi(currentState.playerOne, currentState) : pickupOpposingUi(currentState.playerTwo, currentState)
     }
-    <br />
-    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
 const pickupCurrentUi = (player, currentState) => (player ? (
   <div>
-    <div>
-      {
-        player.hand.map(card => renderCard(card.suit, card.value))
-      }
-    </div>
-    <div>
-      Do you want to pick up the {renderCard(currentState.deck[0].suit, currentState.deck[0].value)} or pass?
-    </div>
-    <Button onClick={() => handlePickup(currentState, 'make')}>Make</Button>
-    <Button onClick={() => handlePickup(currentState, 'pass')}>Pass</Button>
+    Do you want to pick up the {renderCard(currentState.deck[0].suit, currentState.deck[0].value)} or pass?
+    <Button className='button' onClick={() => handlePickup(currentState, 'make')}>Make</Button>
+    <Button className='button' onClick={() => handlePickup(currentState, 'pass')}>Pass</Button>
   </div>
 ) : null);
 
 const pickupOpposingUi = (player, currentState) => (player ? (
   <div>
-    <div>
-      {
-        player.hand.map(card => renderCard(card.suit, card.value))
-      }
-    </div>
-    <div>
-      Waiting on opposing player to pick it up or not
-    </div>
+    { currentState.playerOne.id === player.id ? currentState.playerOne.username : currentState.playerTwo.username } is deciding wether or not to pick up {renderCard(currentState.deck[0].suit, currentState.deck[0].value)}
   </div>
 ) : null);
 
@@ -635,7 +484,6 @@ const handlePickup = (currentState, move) => {
 
 const renderPickupDiscard = currentState => (currentState ? (
   <Row className="text-center">
-    <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer</h5>
     {
       currentState.currentPlayer === Meteor.userId() ?
         Meteor.userId() === currentState.playerOne.id ? pickupDiscardCurrentUi(currentState.playerOne, currentState) : pickupDiscardCurrentUi(currentState.playerTwo, currentState)
@@ -651,42 +499,30 @@ const handleMakeTrump = (currentState, trump) => {
   const newState = currentState;
   newState.trump = trump;
   updateGame(newState);
-}
+};
 
 const pickupDiscardCurrentUi = (player, currentState) => (player ? (
   <div>
     {
       currentState.trump === 'J' ? (
         <div>
-          <div>
-            {
-              player.hand.map(card => renderCard(card.suit, card.value))
-            }
-          </div>
-          <div>
-            <h5>Make it trump!</h5>
-            {
-              ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeTrump(currentState, suit)}>{renderSuit(suit)}</Button>))
-            }
-          </div>
+          <h5>Make it trump!</h5>
+          {
+            ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeTrump(currentState, suit)}>{renderSuit(suit)}</Button>))
+          }
         </div>
       ) : (
         <div>
           <div>
-              You just made it {renderSuit(currentState.trump)}.
+              You just made it {renderSuit(currentState.trump)}. Discard:
           </div>
           <br />
           <div>
-              {
+            {
                 player.hand.map((card, i) => (<Button key={i} onClick={() => handleOrderDiscard(currentState, card.suit, card.value)}>{renderCard(card.suit, card.value)}</Button>))
-              }
-              <Button onClick={() => handleOrderDiscard(currentState, currentState.deck[0].suit, currentState.deck[0].value)}>{renderCard(currentState.deck[0].suit, currentState.deck[0].value)}</Button>
+            }
+            <Button onClick={() => handleOrderDiscard(currentState, currentState.deck[0].suit, currentState.deck[0].value)}>{renderCard(currentState.deck[0].suit, currentState.deck[0].value)}</Button>
           </div>
-          <br />
-          <h5>Pick a card to discard</h5>
-            
-
-            
         </div>
       )
     }
@@ -695,44 +531,28 @@ const pickupDiscardCurrentUi = (player, currentState) => (player ? (
 
 const pickupDiscardOpposingUi = (player, currentState) => (player ? (
   <div>
-    <div>
-      {
-        player.hand.map(card => renderCard(card.suit, card.value))
-      }
-      <br />
-      <h5>Waiting on {player.id === currentState.playerOne.id ? currentState.playerOne.username : currentState.playerTwo.username } to discard</h5>
-    </div>
-
+    <h5>Waiting on {player.id === currentState.playerOne.id ? currentState.playerOne.username : currentState.playerTwo.username} to discard</h5>
   </div>
 ) : null);
 
 const renderMake = currentState => (currentState ? (
   <Row className="text-center">
-    <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer</h5>
     {
       currentState.currentPlayer === Meteor.userId() ?
         Meteor.userId() === currentState.playerOne.id ? makeCurrentUi(currentState.playerOne, currentState) : makeCurrentUi(currentState.playerTwo, currentState)
         :
         Meteor.userId() === currentState.playerOne.id ? makeOpposingUi(currentState.playerOne, currentState) : makeOpposingUi(currentState.playerTwo, currentState)
     }
-    </Row>
+  </Row>
 ) : <Redirect to="/games" />);
 
 const makeCurrentUi = (player, currentState) => (player ? (
   <div>
-    <div>
-      {
-        player.hand.map(card => renderCard(card.suit, card.value))
-      }
-    </div>
-    <br />
-    <div>
-      <h5>What suit do you want to make it?</h5>
-      {
-        ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeSuit(currentState, suit)}>{renderSuit(suit)}</Button>))
-      }
-      <Button onClick={() => handleMakeSuit(currentState, 'pass')}>pass</Button>
-    </div>
+    <h5>What suit do you want to make it?</h5>
+    {
+      ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeSuit(currentState, suit)}>{renderSuit(suit)}</Button>))
+    }
+    <Button onClick={() => handleMakeSuit(currentState, 'pass')}>pass</Button>
   </div>
 ) : null);
 
@@ -747,44 +567,45 @@ const handleMakeSuit = (currentState, suit) => {
 
   if (suit === 'pass') {
     newState.status = 'stickdealer';
-    newState.currentPlayer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerOne.id;
+    if (newState.currentPlayer === newState.playerOne.id) {
+      newState.currentPlayer = newState.playerTwo.id;
+    } else {
+      newState.currentPlayer = newState.playerOne.id;
+    }
   } else {
     newState.status = 'game';
     newState.trump = suit;
-    newState.currentPlayer === newState.playerOne.id ? newState.maker = newState.playerOne.id : newState.maker = newState.playerTwo.id;
-    newState.dealer === newState.playerOne.id ? newState.currentPlayer = newState.playerTwo.id : newState.currentPlayer = newState.playerOne.id;
+    if (newState.currentPlayer === newState.playerOne.id) {
+      newState.maker = newState.playerOne.id;
+    } else {
+      newState.maker = newState.playerTwo.id;
+    }
+    if (newState.dealer === newState.playerOne.id) {
+      newState.currentPlayer = newState.playerTwo.id;
+    } else {
+      newState.currentPlayer = newState.playerOne.id;
+    }
   }
   updateGame(newState);
 };
 
 const renderStickDealer = currentState => (currentState ? (
   <Row className="text-center">
-    <h5>{currentState.playerOne.id === currentState.dealer ? currentState.playerOne.username : currentState.playerTwo.username} is the dealer</h5>
     {
       currentState.currentPlayer === Meteor.userId() ?
         Meteor.userId() === currentState.playerOne.id ? stdCurrentUi(currentState.playerOne, currentState) : stdCurrentUi(currentState.playerTwo, currentState)
         :
         Meteor.userId() === currentState.playerOne.id ? stdOpposingUi(currentState.playerOne, currentState) : stdOpposingUi(currentState.playerTwo, currentState)
     }
-    <br />
-    <Button onClick={() => endGame(currentState._id)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
 const stdCurrentUi = (player, currentState) => (player ? (
   <div>
-    <div>
-      {
-        player.hand.map(card => renderCard(card.suit, card.value))
-      }
-    </div>
-    <br />
-    <div>
-      <h5>What suit do you want to make it?</h5>
-      {
-        ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleStdMake(currentState, suit)}>{renderSuit(suit)}</Button>))
-      }
-    </div>
+    <h5>What suit do you want to make it?</h5>
+    {
+      ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleStdMake(currentState, suit)}>{renderSuit(suit)}</Button>))
+    }
   </div>
 ) : null);
 
@@ -820,30 +641,26 @@ const renderAccepted = currentState => (currentState ? (
 const renderPlayerOneOver = (currentState) => {
   if (currentState.playerOne.trick > currentState.playerTwo.trick) {
     if (currentState.maker === currentState.playerOne.id) {
-      const points = currentState.playerOne.trick - currentState.playerTwo.trick
+      const points = currentState.playerOne.trick - currentState.playerTwo.trick;
       return (
-        <h5>You win and earn {points} {points == 1 ? 'point' : 'points'}</h5>
-      )
-    } else {
-      const points = (currentState.playerOne.trick - currentState.playerTwo.trick) * 2
-      return (
-        <h5>You euchred {currentState.playerTwo.username} and earned {points} {points == 1 ? 'point' : 'points'}</h5>
-      )
+        <h5>You win and earn {points} {points === 1 ? 'point' : 'points'}</h5>
+      );
     }
-  } else {
-    if (currentState.maker === currentState.playerTwo.id) {
-      const points = currentState.playerTwo.trick - currentState.playerOne.trick
-      return (
-        <h5>{currentState.playerTwo.username} wins and earns {points} {points == 1 ? 'point' : 'points'}</h5>
-      )
-    } else {
-      const points = (currentState.playerTwo.trick - currentState.playerOne.trick) * 2
-      return (
-        <h5>{currentState.playerTwo.username} euchred you and earned {points} {points == 1 ? 'point' : 'points'}</h5>
-      )
-    }
+    const points = (currentState.playerOne.trick - currentState.playerTwo.trick) * 2;
+    return (
+      <h5>You euchred {currentState.playerTwo.username} and earned {points} {points === 1 ? 'point' : 'points'}</h5>
+    );
   }
-
+  if (currentState.maker === currentState.playerTwo.id) {
+    const points = currentState.playerTwo.trick - currentState.playerOne.trick;
+    return (
+      <h5>{currentState.playerTwo.username} wins and earns {points} {points === 1 ? 'point' : 'points'}</h5>
+    );
+  }
+  const points = (currentState.playerTwo.trick - currentState.playerOne.trick) * 2;
+  return (
+    <h5>{currentState.playerTwo.username} euchred you and earned {points} {points === 1 ? 'point' : 'points'}</h5>
+  );
 };
 
 const renderPlayerTwoOver = (currentState) => {
@@ -851,29 +668,24 @@ const renderPlayerTwoOver = (currentState) => {
     if (currentState.maker === currentState.playerTwo.id) {
       const points = currentState.playerTwo.trick - currentState.playerOne.trick;
       return (
-        <h5>You win and earned {points} {points == 1 ? 'point' : 'points'}</h5>
-      )
-    } else {
-      const points = (currentState.playerTwo.trick - currentState.playerOne.trick) * 2;
-      return (
-        <h5>You euchred {currentState.playerOne.username} and earned {points} {points == 1 ? 'point' : 'points'}</h5>
-      )
+        <h5>You win and earned {points} {points === 1 ? 'point' : 'points'}</h5>
+      );
     }
-
-
-  } else {
-    if (currentState.maker === currentState.playerTwo.id) {
-      const points = (currentState.playerOne.trick - currentState.playerTwo.trick)*2;
-      return (
-        <h5>{currentState.playerOne.username} wins and earns {points} {points == 1 ? 'point' : 'points'}</h5>
-      )
-    } else {
-      const points = (currentState.playerOne.trick - currentState.playerTwo.trick) * 2;
-      return (
-        <h5>{currentState.playerOne.username} euchred you and earned {points} {points == 1 ? 'point' : 'points'}</h5>
-      )
-    }
+    const points = (currentState.playerTwo.trick - currentState.playerOne.trick) * 2;
+    return (
+      <h5>You euchred {currentState.playerOne.username} and earned {points} {points === 1 ? 'point' : 'points'}</h5>
+    );
   }
+  if (currentState.maker === currentState.playerTwo.id) {
+    const points = (currentState.playerOne.trick - currentState.playerTwo.trick) * 2;
+    return (
+      <h5>{currentState.playerOne.username} wins and earns {points} {points === 1 ? 'point' : 'points'}</h5>
+    );
+  }
+  const points = (currentState.playerOne.trick - currentState.playerTwo.trick) * 2;
+  return (
+    <h5>{currentState.playerOne.username} euchred you and earned {points} {points === 1 ? 'point' : 'points'}</h5>
+  );
 };
 
 const nextHand = (currentState) => {
@@ -935,7 +747,7 @@ const nextHand = (currentState) => {
     newState.status = 'deal';
   }
   updateGame(newState);
-}
+};
 
 const renderOver = currentState => (currentState && currentState.playerOne ? (
   <Row className="text-center">
@@ -952,12 +764,12 @@ const endFinal = (currentState) => {
     username: newState.playerOne.username,
     score: newState.playerOne.score,
     playerId: newState.playerOne.id,
-  }
+  };
   const p2 = {
     username: newState.playerTwo.username,
     score: newState.playerTwo.score,
     playerId: newState.playerTwo.id,
-  }
+  };
   Meteor.call('profiles.insert', p1, (error) => {
     if (error) {
       Bert.alert(error.reason, 'danger');
@@ -980,7 +792,7 @@ const endFinal = (currentState) => {
     }
   });
   console.log(newState);
-}
+};
 
 const renderFinal = currentState => (currentState && currentState.playerOne ? (
   <Row className="text-center">
@@ -989,21 +801,130 @@ const renderFinal = currentState => (currentState && currentState.playerOne ? (
   </Row>
 ) : <Redirect to="/games" />);
 
+const renderTableView = (currentState) => {
+  const status = currentState.status;
+  let component = <Loading />;
+  switch (status) {
+    case 'invite-sent':
+      component = (<InviteFriend />);
+      break;
+    case 'invite-accepted':
+      component = renderAccepted(currentState);
+      break;
+    case 'deal':
+      component = renderDeal(currentState);
+      break;
+    case 'order':
+      component = renderOrder(currentState);
+      break;
+    case 'orderDiscard':
+      component = renderOrderDiscard(currentState);
+      break;
+    case 'pickup':
+      component = renderPickup(currentState);
+      break;
+    case 'pickupDiscard':
+      component = renderPickupDiscard(currentState);
+      break;
+    case 'make':
+      component = renderMake(currentState);
+      break;
+    case 'stickdealer':
+      component = renderStickDealer(currentState);
+      break;
+    case 'game':
+      component = renderTable(currentState);
+      break;
+    case 'over':
+      component = renderOver(currentState);
+      break;
+    default:
+      component = renderFinal(currentState);
+  }
+  return component;
+};
+
+const dealer = () => (<span className="badge">D</span>);
+const yourTurn = () => (<span className="badge">Your turn</span>);
+
+const renderTop = (player, currentState) => (
+  <Row>
+    <Col xs={12}>
+      {player.hand.map(() => renderCover())}
+    </Col>
+    <Col style={{position: 'relative', height: '100px'}} className="text-left" xs={3}>
+      <div style={{position: 'absolute', bottom: '0px'}}>
+        <h3 style={{ marginBottom: '0px' }}>{player.username} {currentState.dealer === player.id ? dealer() : null} {currentState.maker === player.id ? renderSuit(currentState.trump) : null}</h3>
+        <h1 style={{ marginBottom: '0px' }}>{player.score} <small>{player.trick}</small></h1>
+      </div>
+    </Col>
+    <Col xs={2}>
+      {(player.first.length === 1 || player.first.length === 2) && currentState.status === 'game' ? <span>{renderCard(player.first[0].suit, player.first[0].value)}</span> : null}
+      {player.first.length === 2 ? renderCover() : null}
+    </Col>
+    <Col xs={2}>
+      {(player.second.length === 1 || player.second.length === 2) && currentState.status === 'game' ? <span>{renderCard(player.second[0].suit, player.second[0].value)}</span> : null}
+      {player.second.length === 2 ? renderCover() : null}
+    </Col>
+    <Col xs={2}>
+      {(player.third.length === 1 || player.third.length === 2) && currentState.status === 'game' ? <span>{renderCard(player.third[0].suit, player.third[0].value)}</span> : null}
+      {player.third.length === 2 ? renderCover() : null}
+    </Col>
+  </Row>
+);
+
+const renderBottom = (player, currentState) => (
+  <Row>
+    <Col className="text-left" xs={3}>
+      <h1 style={{ marginTop: '0px' }}>{player.score} <small>{player.trick} {currentState.currentPlayer === player.id ? yourTurn() : null}</small></h1>
+      <h3 style={{ marginBottom: '25px' }}>{player.username} {currentState.dealer === player.id ? dealer() : null} {currentState.maker === player.id ? renderSuit(currentState.trump) : null}</h3>
+    </Col>
+    <Col xs={2}>
+      {(player.first.length === 1 || player.first.length === 2) && currentState.status === 'game' ? <Button disabled={followsuit(player, currentState, player.first[0])} onClick={() => handlePlayCard(currentState, player, player.first[0], 'first')}>{renderCard(player.first[0].suit, player.first[0].value)}</Button> : null}
+      {player.first.length === 2 ? renderCover() : null}
+    </Col>
+    <Col xs={2}>
+      {(player.second.length === 1 || player.second.length === 2) && currentState.status === 'game' ? <Button disabled={followsuit(player, currentState, player.second[0])} onClick={() => handlePlayCard(currentState, player, player.second[0], 'second')}>{renderCard(player.second[0].suit, player.second[0].value)}</Button> : null}
+      {player.second.length === 2 ? renderCover() : null}
+    </Col>
+    <Col xs={2}>
+      {(player.third.length === 1 || player.third.length === 2) && currentState.status === 'game' ? <Button disabled={followsuit(player, currentState, player.third[0])} onClick={() => handlePlayCard(currentState, player, player.third[0], 'third')}>{renderCard(player.third[0].suit, player.third[0].value)}</Button> : null}
+      {player.third.length === 2 ? renderCover() : null}
+    </Col>
+    <Col xs={12}>
+      {player.hand.map((card, i) => (<Button key={i} disabled={followsuit(player, currentState, card)} onClick={() => handlePlayCard(currentState, player, card, 'hand')}>{renderCard(card.suit, card.value)}</Button>))}
+    </Col>
+  </Row>
+);
+
+const renderTableLayout = (currentState) => {
+  let currentPlayer = currentState.playerOne;
+  let opposingPlayer = currentState.playerTwo;
+  if (Meteor.userId() === currentState.playerTwo.id) {
+    currentPlayer = currentState.playerTwo;
+    opposingPlayer = currentState.playerOne;
+  }
+  return (
+    <div className="text-center">
+      <div className="top">
+        {renderTop(opposingPlayer, currentState)}
+      </div>
+      <hr />
+      <div className="view">
+        {renderTableView(currentState)}
+      </div>
+      <hr />
+      <div className="bottom">
+        {renderBottom(currentPlayer, currentState)}
+      </div>
+    </div>
+  );
+};
+
 const ViewGame = ({
   loading, currentState,
 }) => (
-  !loading ? currentState && currentState.status == 'invite-sent' ? <InviteFriend /> :
-    currentState.status === 'invite-accepted' ? renderAccepted(currentState) :
-      currentState.status === 'deal' ? renderDeal(currentState) :
-        currentState.status === 'order' ? renderOrder(currentState) :
-          currentState.status === 'orderDiscard' ? renderOrderDiscard(currentState) :
-            currentState.status === 'pickup' ? renderPickup(currentState) :
-              currentState.status === 'pickupDiscard' ? renderPickupDiscard(currentState) :
-                currentState.status === 'make' ? renderMake(currentState) :
-                  currentState.status === 'stickdealer' ? renderStickDealer(currentState) :
-                    currentState.status === 'game' ? renderTable(currentState) :
-                      currentState.status === 'over' ? renderOver(currentState) :
-                        renderFinal(currentState) : <Loading />
+    !loading ? currentState.playerOne ? renderTableLayout(currentState) : <Redirect to="/games" />  : <Loading />
 );
 
 ViewGame.defaultProps = {
@@ -1013,8 +934,6 @@ ViewGame.defaultProps = {
 ViewGame.propTypes = {
   loading: PropTypes.bool.isRequired,
   currentState: PropTypes.object,
-  match: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
 };
 
 export default withTracker(({ match }) => {
