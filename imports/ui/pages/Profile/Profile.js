@@ -129,7 +129,7 @@ class Profile extends React.Component {
             className="form-control"
           />
         </FormGroup>
-        <FormGroup>
+        <FormGroup className='hidden'>
           <ControlLabel>Email Address</ControlLabel>
           <input
             type="email"
@@ -158,7 +158,7 @@ class Profile extends React.Component {
           />
           <InputHint>Use at least six characters.</InputHint>
         </FormGroup>
-        <Button type="submit" bsStyle="success">Save Profile</Button>
+        <Button className='button' type="submit" bsStyle="success">Save Profile</Button>
       </div>
     ) : <div />;
   }

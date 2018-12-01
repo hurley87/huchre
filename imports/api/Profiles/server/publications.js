@@ -3,7 +3,7 @@ import { check } from 'meteor/check';
 import Profiles from '../Profiles';
 
 Meteor.publish('profiles', function profiles() {
-  return Profiles.find({ owner: this.userId });
+  return Profiles.find({}, {limit: 10});
 });
 
 // Note: profiles.view is also used when editing an existing profile.

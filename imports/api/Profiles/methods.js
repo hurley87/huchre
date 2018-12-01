@@ -12,7 +12,11 @@ Meteor.methods({
       username: String,
       score: Number,
       playerId: String,
+      winner: Boolean,
     });
+
+    let wins = 0;
+    if (document.winner) wins = 1;
 
     const profile = Profiles.find({ username: doc.username }).fetch();
     if (profile.length === 0) {
@@ -20,6 +24,8 @@ Meteor.methods({
         username: doc.username,
         playerId: doc.playerId,
         score: doc.score,
+        games: 0,
+        wins,
       });
     } else {
       Profiles.update({ username: doc.username }, {
@@ -28,16 +34,11 @@ Meteor.methods({
         },
         $inc: {
           score: doc.score,
+          games: 1,
+          wins,
         },
       });
     }
-
-
-    // try {
-    //   return Profiles.insert(doc);
-    // } catch (exception) {
-    //   throw new Meteor.Error('500', exception);
-    // }
   },
   'profiles.update': function profilesUpdate(doc) {
     check(doc, {

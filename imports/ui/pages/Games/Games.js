@@ -5,6 +5,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import GamesCollection from '../../../api/Games/Games';
 import Loading from '../../components/Loading/Loading';
 import NewGame from '../NewGame/NewGame';
+import Profiles from '../Profiles/Profiles';
 import OpenGames from '../OpenGames/OpenGames';
 import { Redirect } from 'react-router-dom';
 
@@ -13,7 +14,19 @@ const Games = ({
 }) => (!loading ? (
   <div className="Games">
     {
-      currentGames.length > 0 ? <Redirect to={`/games/${currentGames[0]._id}`} /> : openLength > 0 ? <OpenGames /> : <NewGame />
+      currentGames.length > 0 ? <Redirect to={`/games/${currentGames[0]._id}`} /> : openLength > 0 ? (
+        <div>
+          <OpenGames />
+          <hr />
+          <Profiles />
+        </div>
+      ) : (
+        <div>
+          <NewGame />
+          <hr />
+          <Profiles />
+        </div>
+      )
     }
   </div>
 ) : <Loading />);

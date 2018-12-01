@@ -44,6 +44,10 @@ Profiles.schema = new SimpleSchema({
     type: String,
     label: 'The body of the profile.',
   },
+  games: {
+    type: Number,
+    label: 'The body of the profile.',
+  },
 });
 
 Profiles.attachSchema(Profiles.schema);

@@ -58,7 +58,7 @@ class NewGame extends React.Component {
             defaultValue={doc && doc.limit}
           />
         </FormGroup>
-        <Button type="submit" bsStyle="success">
+        <Button className="button" type="submit" bsStyle="success">
           New Game
         </Button>
       </form>

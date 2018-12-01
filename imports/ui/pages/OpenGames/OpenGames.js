@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button } from 'react-bootstrap';
+import { Table, Alert, Button, Row, Col } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import GamesCollection from '../../../api/Games/Games';
@@ -25,34 +25,22 @@ const OpenGames = ({
   loading, games, match, history,
 }) => (!loading ? (
   <div className="OpenGames">
+    <h5>Open Games</h5>
     {games.length ?
-      <Table responsive>
-        <thead>
-          <tr>
-            <th>Last Updated</th>
-            <th>Created</th>
-            <th />
-            <th />
-          </tr>
-        </thead>
-        <tbody>
+      <Row>
           {games.map(game => (
-              <tr key={game._id}>
-                <td>{timeago(game.updatedAt)}</td>
-                <td>{monthDayYearAtTime(game.createdAt)}</td>
-                <td>
-                  <Button
-                    bsStyle="success"
-                    onClick={() => joinGame(game, history)}
-                    block
-                  >
-                    Join Game
-                      </Button>
-                </td>
-            </tr>
+            <Col key={game._id} sm={3}>
+              <div className='well text-center'>
+                <Button
+                  className='button'
+                  onClick={() => joinGame(game, history)}
+                >
+                  Play {game.playerOne.username}
+                  </Button>
+              </div>
+            </Col>
           ))}
-        </tbody>
-      </Table> : <div>There are no open games.</div>}
+      </Row> : <div>There are no open games.</div>}
   </div>
 ) : <Loading />);
 
@@ -66,6 +54,7 @@ export default withTracker(() => {
   const games = GamesCollection.find({
     'playerTwo.id': '', 
   }).fetch();
+  console.log(games)
   return {
     loading: !subscription.ready(),
     games,
