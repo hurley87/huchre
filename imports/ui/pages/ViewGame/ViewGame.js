@@ -631,12 +631,12 @@ const renderAccepted = currentState => (currentState ? (
   <Row className="text-center">
     { currentState.currentPlayer === Meteor.userId() ? (
       <Row className="text-center">
-        { currentState.currentPlayer === currentState.playerOne.id ? `${currentState.playerOne.username} needs to press a button to deal` : `${currentState.playerTwo.username} needs to press a button to deal` }
-        <Button onClick={() => handleDeal(currentState)}>Deal</Button>
+        <h5>{currentState.currentPlayer === currentState.playerOne.id ? `${currentState.playerOne.username} needs to press a button to deal` : `${currentState.playerTwo.username} needs to press a button to deal`}</h5>
+        <Button className="button" onClick={() => handleDeal(currentState)}>Deal</Button>
       </Row>
     ) : (
       <Row className="text-center">
-        {currentState.currentPlayer === currentState.playerOne.id ? `waiting on ${currentState.playerOne.username} to deal` : `waiting on ${currentState.playerTwo.username} to deal`}
+          <h5>{currentState.currentPlayer === currentState.playerOne.id ? `waiting on ${currentState.playerOne.username} to deal` : `waiting on ${currentState.playerTwo.username} to deal`}</h5>
       </Row>
     )}
   </Row>
@@ -803,8 +803,8 @@ const endFinal = (currentState) => {
 
 const renderFinal = currentState => (currentState && currentState.playerOne ? (
   <Row className="text-center">
-    Game is over!
-    <Button onClick={() => endFinal(currentState)}>End Game</Button>
+    <h5>Game is over!</h5>
+    <Button className="button" onClick={() => endFinal(currentState)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
