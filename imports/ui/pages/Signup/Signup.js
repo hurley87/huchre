@@ -107,7 +107,7 @@ class Signup extends React.Component {
                 />
                 <InputHint>Use at least six characters.</InputHint>
               </FormGroup>
-              <Button type="submit" bsStyle="success">Sign Up</Button>
+              <Button className="button" type="submit" bsStyle="success">Sign Up</Button>
               <AccountPageFooter>
                 <p>Already have an account? <Link to="/login">Log In</Link>.</p>
               </AccountPageFooter>

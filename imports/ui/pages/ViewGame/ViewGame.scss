@@ -1,6 +1,12 @@
 @import '../../stylesheets/mixins';
 @import '../../stylesheets/colors';
 
+.secondary {
+  position: absolute;
+  left: 0px;
+  z-index: -1;
+}
+
 .play-card {
   border: 1px solid #eee;
   margin: 2px;

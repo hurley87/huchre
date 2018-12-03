@@ -90,47 +90,17 @@ const renderTable = currentState => (currentState && currentState.playerOne ? (
 
 const convertCard = (trump, card) => {
   if (card.value === 15) {
-    return {
-      suit: trump,
-      value: 18,
-      view: true,
-      hover: false,
-    };
+    return { suit: trump, value: 18 };
   } else if (card.value === 11 && card.suit === trump) {
-    return {
-      suit: trump,
-      value: 17,
-      view: true,
-      hover: false,
-    };
+    return { suit: trump, value: 17 };
   } else if (trump === 'S' && card.value === 11 && card.suit === 'C') {
-    return {
-      suit: trump,
-      value: 16,
-      view: true,
-      hover: false,
-    };
+    return { suit: trump, value: 16 };
   } else if (trump === 'C' && card.value === 11 && card.suit === 'S') {
-    return {
-      suit: trump,
-      value: 16,
-      view: true,
-      hover: false,
-    };
+    return { suit: trump, value: 16 };
   } else if (trump === 'H' && card.value === 11 && card.suit === 'D') {
-    return {
-      suit: trump,
-      value: 16,
-      view: true,
-      hover: false,
-    };
+    return { suit: trump, value: 16 };
   } else if (trump === 'D' && card.value === 11 && card.suit === 'H') {
-    return {
-      suit: trump,
-      value: 16,
-      view: true,
-      hover: false,
-    };
+    return { suit: trump, value: 16 };
   }
   return card;
 };
@@ -314,11 +284,12 @@ const renderDeal = currentState => (currentState ? (
       <Row className="text-center">
         { currentState.currentPlayer === currentState.playerOne.id ? (
           <div>
-            {currentState.playerOne.username} needs to press a button to deal
+            <h5>Deal the cards to start the game</h5>
           </div>
           ) : (
             <div>
-              {currentState.playerTwo.username} needs to press a button to deal
+              <h5>Deal the cards to start the game</h5>
+
             </div>
           )
         }
@@ -328,11 +299,12 @@ const renderDeal = currentState => (currentState ? (
       <Row className="text-center">
         { currentState.currentPlayer === currentState.playerOne.id ? (
           <div>
-              waiting on {currentState.playerOne.username} to deal
+            <h5>waiting on {currentState.playerOne.username} to deal</h5>
           </div>
           ) : (
             <div>
-              waiting on {currentState.playerTwo.username} to deal
+              <h5>waiting on {currentState.playerTwo.username} to deal</h5>
+
             </div>
           )
         }
@@ -340,11 +312,6 @@ const renderDeal = currentState => (currentState ? (
     )}
   </Row>
 ) : <Redirect to="/games" />);
-
-// /////////////
-// ORDER DISCARD
-// ////////////
-
 
 const renderOrderDiscard = currentState => (currentState ? (
   <Row className="text-center">
@@ -359,7 +326,7 @@ const renderOrderDiscard = currentState => (currentState ? (
 
 const orderDiscardCurrentUi = (player, currentState) => (player ? (
   <div>
-    Discard:
+    You were ordered to pickup! Discard:
     {
       player.hand.map((card, i) => (<Button key={i} onClick={() => handleOrderDiscard(currentState, card.suit, card.value)}>{renderCard(card.suit, card.value)}</Button>))
     }
@@ -391,11 +358,6 @@ const handleOrderDiscard = (currentState, suit, value) => {
   newState.status = 'game';
   updateGame(newState);
 };
-
-// /////////////
-// ORDER
-// ////////////
-
 
 const renderOrder = currentState => (currentState ? (
   <Row className="text-center">
@@ -553,7 +515,7 @@ const makeCurrentUi = (player, currentState) => (player ? (
 
 const makeOpposingUi = (player, currentState) => (player ? (
   <div>
-    Waiting on opposing player to make it.
+    <h5>Waiting on {player.username} to make it</h5>
   </div>
 ) : null);
 
@@ -631,12 +593,12 @@ const renderAccepted = currentState => (currentState ? (
   <Row className="text-center">
     { currentState.currentPlayer === Meteor.userId() ? (
       <Row className="text-center">
-        { currentState.currentPlayer === currentState.playerOne.id ? `${currentState.playerOne.username} needs to press a button to deal` : `${currentState.playerTwo.username} needs to press a button to deal` }
-        <Button onClick={() => handleDeal(currentState)}>Deal</Button>
+        <h5>Deal the cards to start the game</h5>
+        <Button className='button' onClick={() => handleDeal(currentState)}>Deal</Button>
       </Row>
     ) : (
       <Row className="text-center">
-        {currentState.currentPlayer === currentState.playerOne.id ? `waiting on ${currentState.playerOne.username} to deal` : `waiting on ${currentState.playerTwo.username} to deal`}
+        <h5>Waiting on  {currentState.currentPlayer === currentState.playerOne.id ? currentState.playerOne.username : currentState.playerTwo.username} to deal the cards</h5>
       </Row>
     )}
   </Row>
@@ -649,22 +611,26 @@ const renderPlayerOneOver = (currentState) => {
       return (
         <h5>You win and earn {points} {points === 1 ? 'point' : 'points'}</h5>
       );
+    } else {
+      const points = (currentState.playerOne.trick - currentState.playerTwo.trick) * 2;
+      return (
+        <h5>You euchred {currentState.playerTwo.username} and earned {points} {points === 1 ? 'point' : 'points'}</h5>
+      );
     }
-    const points = (currentState.playerOne.trick - currentState.playerTwo.trick) * 2;
-    return (
-      <h5>You euchred {currentState.playerTwo.username} and earned {points} {points === 1 ? 'point' : 'points'}</h5>
-    );
+  } else {
+    if (currentState.maker === currentState.playerTwo.id) {
+      const points = currentState.playerTwo.trick - currentState.playerOne.trick;
+      return (
+        <h5>{currentState.playerTwo.username} wins and earns {points} {points === 1 ? 'point' : 'points'}</h5>
+      );
+    } else {
+      const points = (currentState.playerTwo.trick - currentState.playerOne.trick) * 2;
+      return (
+        <h5>{currentState.playerTwo.username} euchred you and earned {points} {points === 1 ? 'point' : 'points'}</h5>
+      );
+    }
   }
-  if (currentState.maker === currentState.playerTwo.id) {
-    const points = currentState.playerTwo.trick - currentState.playerOne.trick;
-    return (
-      <h5>{currentState.playerTwo.username} wins and earns {points} {points === 1 ? 'point' : 'points'}</h5>
-    );
-  }
-  const points = (currentState.playerTwo.trick - currentState.playerOne.trick) * 2;
-  return (
-    <h5>{currentState.playerTwo.username} euchred you and earned {points} {points === 1 ? 'point' : 'points'}</h5>
-  );
+
 };
 
 const renderPlayerTwoOver = (currentState) => {
@@ -674,22 +640,27 @@ const renderPlayerTwoOver = (currentState) => {
       return (
         <h5>You win and earned {points} {points === 1 ? 'point' : 'points'}</h5>
       );
+    } else {
+      const points = (currentState.playerTwo.trick - currentState.playerOne.trick) * 2;
+      return (  
+        <h5>You euchred {currentState.playerOne.username} and earned {points} {points === 1 ? 'point' : 'points'}</h5>
+      );
     }
-    const points = (currentState.playerTwo.trick - currentState.playerOne.trick) * 2;
-    return (
-      <h5>You euchred {currentState.playerOne.username} and earned {points} {points === 1 ? 'point' : 'points'}</h5>
-    );
+  } else {
+    if (currentState.maker === currentState.playerOne.id) {
+      const points = currentState.playerOne.trick - currentState.playerTwo.trick;
+      return (
+        <h5>{currentState.playerOne.username} wins and earns {points} {points === 1 ? 'point' : 'points'}</h5>
+      );
+    } else {
+      const points = (currentState.playerOne.trick - currentState.playerTwo.trick) * 2;
+      return (
+        <h5>{currentState.playerOne.username} euchred you and earned {points} {points === 1 ? 'point' : 'points'}</h5>
+      );
+    }
   }
-  if (currentState.maker === currentState.playerTwo.id) {
-    const points = (currentState.playerOne.trick - currentState.playerTwo.trick) * 2;
-    return (
-      <h5>{currentState.playerOne.username} wins and earns {points} {points === 1 ? 'point' : 'points'}</h5>
-    );
-  }
-  const points = (currentState.playerOne.trick - currentState.playerTwo.trick) * 2;
-  return (
-    <h5>{currentState.playerOne.username} euchred you and earned {points} {points === 1 ? 'point' : 'points'}</h5>
-  );
+
+
 };
 
 const nextHand = (currentState) => {
@@ -738,12 +709,32 @@ const nextHand = (currentState) => {
     newState.dealer = newState.playerOne.id;
   }
 
+  const suits = ['S', 'D', 'H', 'C'];
+  const cards = [];
+
+  let count = 9;
+
+  while (count <= 14) {
+    for (const i in suits) {
+      cards.push({
+        suit: suits[i],
+        value: count,
+      });
+    }
+    count += 1;
+  }
+
+  cards.push({
+    suit: 'J',
+    value: 15
+  });
+
+  newState.deck = cards;
   newState.maker = '';
   newState.playerOne.trick = 0;
   newState.playerTwo.trick = 0;
   newState.trump = '';
   newState.handCount = 0;
-  // TODO: add view when game is over! insert or update player profiles at that point
   newState.status = 'deal';
   if (newState.playerOne.score >= newState.limit || newState.playerTwo.score >= newState.limit) {
     newState.status = 'final';
@@ -758,7 +749,7 @@ const renderOver = currentState => (currentState && currentState.playerOne ? (
     {
       Meteor.userId() === currentState.playerOne.id ? renderPlayerOneOver(currentState) : renderPlayerTwoOver(currentState)
     }
-    <Button className='button' onClick={() => nextHand(currentState)}>Next Hand</Button>
+    <Button className="button" onClick={() => nextHand(currentState)}>Next Hand</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
@@ -803,8 +794,8 @@ const endFinal = (currentState) => {
 
 const renderFinal = currentState => (currentState && currentState.playerOne ? (
   <Row className="text-center">
-    Game is over!
-    <Button onClick={() => endFinal(currentState)}>End Game</Button>
+    <h5>{currentState.playerOne.score > currentState.playerTwo.score ? currentState.playerOne.username : currentState.playerTwo.username} wins with a score of {currentState.playerOne.score > currentState.playerTwo.score ? currentState.playerOne.score : currentState.playerTwo.score} to {currentState.playerOne.score > currentState.playerTwo.score ? currentState.playerTwo.score : currentState.playerOne.score}</h5>
+    <Button className='button' onClick={() => endFinal(currentState)}>End Game</Button>
   </Row>
 ) : <Redirect to="/games" />);
 
@@ -861,7 +852,7 @@ const renderTop = (player, currentState) => (
     </Col>
     <Col style={{position: 'relative', height: '100px'}} className="text-left" xs={3}>
       <div style={{position: 'absolute', bottom: '0px'}}>
-        <h3 style={{ marginBottom: '0px' }}>{player.username} {currentState.dealer === player.id ? dealer() : null} {currentState.maker === player.id ? (<span style={{ position: 'relative', bottom: '1px' }}>{renderSuit(currentState.trump)}</span>) : null}</h3>
+        <h5 style={{ marginBottom: '0px' }}>{player.username} {currentState.dealer === player.id ? dealer() : null} {currentState.maker === player.id ? (<span style={{ position: 'relative', bottom: '1px' }}>{renderSuit(currentState.trump)}</span>) : null}</h5>
         <h1 style={{ marginBottom: '0px' }}>{player.score} <small>{player.trick}</small></h1>
       </div>
     </Col>
@@ -884,7 +875,7 @@ const renderBottom = (player, currentState) => (
   <Row>
     <Col className="text-left" xs={3}>
       <h1 style={{ marginTop: '0px' }}>{player.score} <small>{player.trick} {currentState.currentPlayer === player.id && currentState.status === 'game' ? yourTurn(currentState) : null}</small></h1>
-      <h3 style={{ marginBottom: '25px' }}>{player.username} {currentState.dealer === player.id ? dealer() : null} {currentState.maker === player.id ? (<span style={{ position: 'relative', bottom: '1px' }}>{renderSuit(currentState.trump)}</span>) : null}</h3>
+      <h5 style={{ marginBottom: '25px' }}>{player.username} {currentState.dealer === player.id ? dealer() : null} {currentState.maker === player.id ? (<span style={{ position: 'relative', bottom: '1px' }}>{renderSuit(currentState.trump)}</span>) : null}</h5>
     </Col>
     <Col xs={2}>
       {(player.first.length === 1 || player.first.length === 2) && currentState.status === 'game' ? <Button disabled={followsuit(player, currentState, player.first[0])} onClick={() => handlePlayCard(currentState, player, player.first[0], 'first')}>{renderCard(player.first[0].suit, player.first[0].value)}</Button> : null}
@@ -917,11 +908,10 @@ const renderTableLayout = (currentState) => {
       {
         states.includes(currentState.status) ? (
           <div>
-          <div className="top">
-            {renderTop(opposingPlayer, currentState)}
-            
-          </div>
-          <hr />
+            <div className="top">
+              {renderTop(opposingPlayer, currentState)}
+            </div>
+            <hr />
           </div>
         ) : null
       }

@@ -16,7 +16,7 @@ Meteor.methods({
     });
 
     let wins = 0;
-    if (document.winner) wins = 1;
+    if (doc.winner) wins = 1;
 
     const profile = Profiles.find({ username: doc.username }).fetch();
     if (profile.length === 0) {
@@ -24,7 +24,7 @@ Meteor.methods({
         username: doc.username,
         playerId: doc.playerId,
         score: doc.score,
-        games: 0,
+        games: 1,
         wins,
       });
     } else {

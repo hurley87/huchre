@@ -46,12 +46,12 @@ class InviteFriend extends React.Component {
     });
   }
 
-  render() {
+  render() { 
     return (
       <div className="InviteFriend">
         <Row>
-          <Col xs={12} sm={6} md={5} lg={4}>
-            <h3>Invite a friend to sign up and join your game!</h3>
+          <Col xs={12}>
+            <h5 className="text-center">Waiting on someone to join your game.</h5>
           {
             // <h4 className="page-header">Invite a Friend</h4>
             // <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
