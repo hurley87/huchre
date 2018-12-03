@@ -7,6 +7,10 @@
   z-index: -1;
 }
 
+.first-row {
+  height: 110px;
+}
+
 .play-card {
   border: 1px solid #eee;
   margin: 2px;
@@ -42,6 +46,11 @@
   color: #fff;
   opacity: 0.8;
 }
+
+.suitButton {
+  padding: 3px;
+}
+
 
 @include breakpoint(tablet) {
   .Index {

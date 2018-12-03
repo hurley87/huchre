@@ -299,11 +299,11 @@ const renderDeal = currentState => (currentState ? (
       <Row className="text-center">
         { currentState.currentPlayer === currentState.playerOne.id ? (
           <div>
-            <h5>waiting on {currentState.playerOne.username} to deal</h5>
+            <h5>Waiting on {currentState.playerOne.username} to deal</h5>
           </div>
           ) : (
             <div>
-              <h5>waiting on {currentState.playerTwo.username} to deal</h5>
+              <h5>Waiting on {currentState.playerTwo.username} to deal</h5>
 
             </div>
           )
@@ -470,7 +470,7 @@ const pickupDiscardCurrentUi = (player, currentState) => (player ? (
         <div>
           <h5>Make it trump!</h5>
           {
-            ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeTrump(currentState, suit)}>{renderSuit(suit)}</Button>))
+            ['H', 'S', 'C', 'D'].map((suit, i) => (<Button className='suitButton' key={i} onClick={() => handleMakeTrump(currentState, suit)}>{renderSuit(suit)}</Button>))
           }
         </div>
       ) : (
@@ -507,9 +507,11 @@ const makeCurrentUi = (player, currentState) => (player ? (
   <div>
     <h5>What suit do you want to make it?</h5>
     {
-      ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleMakeSuit(currentState, suit)}>{renderSuit(suit)}</Button>))
+      ['H', 'S', 'C', 'D'].map((suit, i) => { 
+        return suit !== currentState.deck[0].suit ? (<Button className='suitButton' key={i} onClick={() => handleMakeSuit(currentState, suit)}>{renderSuit(suit)}</Button>) : null 
+      })
     }
-    <Button onClick={() => handleMakeSuit(currentState, 'pass')}>pass</Button>
+    <Button className="button" onClick={() => handleMakeSuit(currentState, 'pass')}>pass</Button>
   </div>
 ) : null);
 
@@ -561,14 +563,14 @@ const stdCurrentUi = (player, currentState) => (player ? (
   <div>
     <h5>What suit do you want to make it?</h5>
     {
-      ['H', 'S', 'C', 'D'].map((suit, i) => (<Button key={i} onClick={() => handleStdMake(currentState, suit)}>{renderSuit(suit)}</Button>))
+      ['H', 'S', 'C', 'D'].map((suit, i) => (<Button className='suitButton' key={i} onClick={() => handleStdMake(currentState, suit)}>{renderSuit(suit)}</Button>))
     }
   </div>
 ) : null);
 
 const stdOpposingUi = (player, currentState) => (player ? (
   <div>
-    Waiting on opposing player to make it.
+    <h5>Waiting on {currentState.playerOne.id === player.id ? currentState.playerOne.username : currentState.playerTwo.username } to make it</h5>
   </div>
 ) : null);
 
@@ -715,7 +717,7 @@ const nextHand = (currentState) => {
   let count = 9;
 
   while (count <= 14) {
-    for (const i in suits) {
+    for (const i in suits) { 
       cards.push({
         suit: suits[i],
         value: count,
@@ -846,10 +848,13 @@ const dealer = () => (<span className="badge">D</span>);
 const yourTurn = (currentState) => (<span className="badge">Your { currentState.handCount % 2 === 0 ? 'lead' : 'turn'}</span>);
 
 const renderTop = (player, currentState) => (
-  <Row>
+  <div>
+  <Row className='first-row'>
     <Col xs={12}>
       {player.hand.map(() => renderCover())}
     </Col>
+  </Row>
+  <Row className='first-row'>
     <Col style={{position: 'relative', height: '100px'}} className="text-left" xs={3}>
       <div style={{position: 'absolute', bottom: '0px'}}>
         <h5 style={{ marginBottom: '0px' }}>{player.username} {currentState.dealer === player.id ? dealer() : null} {currentState.maker === player.id ? (<span style={{ position: 'relative', bottom: '1px' }}>{renderSuit(currentState.trump)}</span>) : null}</h5>
@@ -869,30 +874,35 @@ const renderTop = (player, currentState) => (
       {player.third.length === 2 ? renderCover() : null}
     </Col>
   </Row>
+  </div>
 );
 
 const renderBottom = (player, currentState) => (
-  <Row>
-    <Col className="text-left" xs={3}>
-      <h1 style={{ marginTop: '0px' }}>{player.score} <small>{player.trick} {currentState.currentPlayer === player.id && currentState.status === 'game' ? yourTurn(currentState) : null}</small></h1>
-      <h5 style={{ marginBottom: '25px' }}>{player.username} {currentState.dealer === player.id ? dealer() : null} {currentState.maker === player.id ? (<span style={{ position: 'relative', bottom: '1px' }}>{renderSuit(currentState.trump)}</span>) : null}</h5>
-    </Col>
-    <Col xs={2}>
-      {(player.first.length === 1 || player.first.length === 2) && currentState.status === 'game' ? <Button disabled={followsuit(player, currentState, player.first[0])} onClick={() => handlePlayCard(currentState, player, player.first[0], 'first')}>{renderCard(player.first[0].suit, player.first[0].value)}</Button> : null}
-      {player.first.length === 2 ? renderCover() : null}
-    </Col>
-    <Col xs={2}>
-      {(player.second.length === 1 || player.second.length === 2) && currentState.status === 'game' ? <Button disabled={followsuit(player, currentState, player.second[0])} onClick={() => handlePlayCard(currentState, player, player.second[0], 'second')}>{renderCard(player.second[0].suit, player.second[0].value)}</Button> : null}
-      {player.second.length === 2 ? renderCover() : null}
-    </Col>
-    <Col xs={2}>
-      {(player.third.length === 1 || player.third.length === 2) && currentState.status === 'game' ? <Button disabled={followsuit(player, currentState, player.third[0])} onClick={() => handlePlayCard(currentState, player, player.third[0], 'third')}>{renderCard(player.third[0].suit, player.third[0].value)}</Button> : null}
-      {player.third.length === 2 ? renderCover() : null}
-    </Col>
-    <Col xs={12}>
-      {player.hand.map((card, i) => (<Button key={i} disabled={followsuit(player, currentState, card)} onClick={() => handlePlayCard(currentState, player, card, 'hand')}>{renderCard(card.suit, card.value)}</Button>))}
-    </Col>
-  </Row>
+  <div>
+    <Row className='first-row'>
+      <Col className="text-left" xs={3}>
+        <h1 style={{ marginTop: '0px' }}>{player.score} <small>{player.trick} {currentState.currentPlayer === player.id && currentState.status === 'game' ? yourTurn(currentState) : null}</small></h1>
+        <h5 style={{ marginBottom: '25px' }}>{player.username} {currentState.dealer === player.id ? dealer() : null} {currentState.maker === player.id ? (<span style={{ position: 'relative', bottom: '1px' }}>{renderSuit(currentState.trump)}</span>) : null}</h5>
+      </Col>
+      <Col xs={2}>
+        {(player.first.length === 1 || player.first.length === 2) && currentState.status === 'game' ? <Button disabled={followsuit(player, currentState, player.first[0])} onClick={() => handlePlayCard(currentState, player, player.first[0], 'first')}>{renderCard(player.first[0].suit, player.first[0].value)}</Button> : null}
+        {player.first.length === 2 ? renderCover() : null}
+      </Col>
+      <Col xs={2}>
+        {(player.second.length === 1 || player.second.length === 2) && currentState.status === 'game' ? <Button disabled={followsuit(player, currentState, player.second[0])} onClick={() => handlePlayCard(currentState, player, player.second[0], 'second')}>{renderCard(player.second[0].suit, player.second[0].value)}</Button> : null}
+        {player.second.length === 2 ? renderCover() : null}
+      </Col>
+      <Col xs={2}>
+        {(player.third.length === 1 || player.third.length === 2) && currentState.status === 'game' ? <Button disabled={followsuit(player, currentState, player.third[0])} onClick={() => handlePlayCard(currentState, player, player.third[0], 'third')}>{renderCard(player.third[0].suit, player.third[0].value)}</Button> : null}
+        {player.third.length === 2 ? renderCover() : null}
+      </Col>
+    </Row>
+    <Row className='first-row'>
+      <Col xs={12}>
+        {player.hand.map((card, i) => (<Button key={i} disabled={followsuit(player, currentState, card)} onClick={() => handlePlayCard(currentState, player, card, 'hand')}>{renderCard(card.suit, card.value)}</Button>))}
+      </Col>
+    </Row>
+  </div>
 );
 
 const renderTableLayout = (currentState) => {
