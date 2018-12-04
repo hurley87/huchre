@@ -1,6 +1,129 @@
 @import '../../stylesheets/mixins';
 @import '../../stylesheets/colors';
 
+.tableTop {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  background-color: #fff;
+  z-index: 999999;
+
+  .endgame {
+    position: absolute;
+    right: 2px;
+  }
+
+  .progressBottom {
+    position: absolute;
+    bottom: 0px;
+    border-top: 1px solid #eee;
+    left: 0px;
+    right: 50px;
+    height: 10px;
+  }
+
+  .progressTop {
+    position: absolute;
+    top: 0px;
+    border-bottom: 1px solid #eee;
+    left: 0px;
+    right: 50px;
+    height: 10px;
+  }
+
+  .progressContainer {
+    height: 10px;
+    width: 100%;
+    display: block;
+    .progressBar {
+      background-color: #2ecc71;
+      height: 10px;
+    } 
+  }
+
+
+  .form-control {
+    width: 80%;
+    float: left;
+  }
+
+  .submitbutton {
+    float: right;
+    width: 18%;
+    height: 30px;
+  }
+
+  .chatForm {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+  }
+
+  .actionView {
+    position: absolute;
+    top: 40%;
+    bottom: 40%;
+    right: 0px;
+    text-align: center;
+    width: 85%;
+    left: 0px;
+  }
+
+  .chat {
+    position: absolute;
+    height: 100%;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    width: 300px;
+    border-left: 2px solid #eee;
+
+    .messages {
+      text-align: left;
+      padding: 10px;
+      position: absolute;
+      bottom: 30px;
+      top: 20px;
+      overflow: scroll;
+    }
+  }
+
+  .elements {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 250px;
+
+    .resultsTop {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+    }
+    
+    .resultsBottom {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+    }
+
+    .bottomCards {
+      width: 100%;
+      position: absolute;
+      bottom: 20px;
+    }
+
+    .topCards {
+      width: 100%;
+      position: absolute;
+      top: 20px;
+    }
+  }
+}
+
 .secondary {
   position: absolute;
   left: 0px;
@@ -13,7 +136,13 @@
 
 .play-card {
   border: 1px solid #eee;
-  margin: 2px;
+  margin: 3px;
+}
+
+.cover-card {
+  position: relative;
+  right: 50px;
+  z-index: -2;
 }
 
 .btn {
@@ -22,7 +151,7 @@
 }
 
 .top {
-  height: 210px;
+  height: 260px;
 }
 
 .view {
