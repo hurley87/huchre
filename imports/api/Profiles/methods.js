@@ -24,7 +24,7 @@ Meteor.methods({
         username: doc.username,
         playerId: doc.playerId,
         score: doc.score,
-        games: 0,
+        games: 1,
         wins,
       });
     } else {

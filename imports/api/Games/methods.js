@@ -21,8 +21,6 @@ Meteor.methods({
         cards.push({
           suit: suits[i],
           value: count,
-          view: true,
-          hover: false,
         });
       }
       count += 1;
@@ -30,9 +28,7 @@ Meteor.methods({
 
     cards.push({
       suit: 'J',
-      value: 15,
-      view: true,
-      hover: false,
+      value: 15
     });
 
     try {

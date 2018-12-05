@@ -36,9 +36,7 @@ const App = props => (
   <Router>
     {!props.loading ? (
       <div className="App">
-        {
-          location.pathname.includes("/games/") && location.pathname.length > 11 ? null : <Navigation {...props} />
-        }
+        <Navigation {...props} />
         <Grid>
           <Switch>
             <Route exact name="index" path="/" component={Index} />

@@ -48,6 +48,10 @@ Profiles.schema = new SimpleSchema({
     type: Number,
     label: 'The body of the profile.',
   },
+  wins: {
+    type: Number,
+    label: 'Wins need to exist',
+  },
 });
 
 Profiles.attachSchema(Profiles.schema);

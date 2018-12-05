@@ -76,7 +76,7 @@ class Login extends React.Component {
                   className="form-control"
                 />
               </FormGroup>
-              <Button type="submit" bsStyle="success">Log In</Button>
+              <Button className="button" type="submit" bsStyle="success">Log In</Button>
               <AccountPageFooter>
                 <p>{'Don\'t have an account?'} <Link to="/signup">Sign Up</Link>.</p>
               </AccountPageFooter>
