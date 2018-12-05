@@ -25,17 +25,17 @@ const OpenGames = ({
   loading, games, match, history,
 }) => (!loading ? (
   <div className="OpenGames">
-    <h5>Open Games</h5>
     {games.length ?
       <Row>
           {games.map(game => (
             <Col key={game._id} sm={3}>
               <div className='well text-center'>
+                <h5 style={{marginTop: '0px'}}>Play {game.playerOne.username} up to {game.limit}</h5>
                 <Button
                   className='button'
                   onClick={() => joinGame(game, history)}
                 >
-                  Play {game.playerOne.username}
+                  Join Game
                   </Button>
               </div>
             </Col>

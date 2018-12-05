@@ -48,7 +48,7 @@ class NewGame extends React.Component {
     const { doc } = this.props;
     return (
       <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
-        <FormGroup className='hidden'>
+        <FormGroup>
           <ControlLabel>What limit would you like to play up to?</ControlLabel>
           <input
             type="number"

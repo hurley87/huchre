@@ -9,7 +9,7 @@ const AuthenticatedNavigation = ({ name, history }) => (
     <Nav pullRight>
       <NavDropdown eventKey={2} title={name} id="user-nav-dropdown">
         <LinkContainer to="/games">
-          <NavItem eventKey={2.1} href="/games">New Game</NavItem>
+          <NavItem eventKey={2.1} href="/games">Games</NavItem>
         </LinkContainer>
         <LinkContainer to="/rules">
           <NavItem eventKey={2.1} href="/rules">Rules</NavItem>

@@ -25,7 +25,6 @@ const Profiles = ({
   loading, profiles, match, history,
 }) => (!loading ? (
   <div className="Profiles">
-    <h5>Leaderboard</h5>
     {profiles.length ?
       <Table responsive>
         <thead>

@@ -8,6 +8,7 @@ import NewGame from '../NewGame/NewGame';
 import Profiles from '../Profiles/Profiles';
 import OpenGames from '../OpenGames/OpenGames';
 import { Redirect } from 'react-router-dom';
+import { Row, Col } from 'react-bootstrap';
 
 const Games = ({
   loading, openLength, currentGames, match, history,
@@ -21,11 +22,15 @@ const Games = ({
           <Profiles />
         </div>
       ) : (
-        <div>
-          <NewGame />
-          <hr />
-          <Profiles />
-        </div>
+        <Row>
+          <Col sm={4}>
+            <NewGame />
+          </Col>
+          <Col sm={12}>
+            <hr />
+            <Profiles />
+          </Col>
+        </Row>
       )
     }
   </div>
