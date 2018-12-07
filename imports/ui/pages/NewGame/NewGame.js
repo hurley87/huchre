@@ -49,7 +49,7 @@ class NewGame extends React.Component {
     return (
       <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
         <FormGroup>
-          <ControlLabel>How many points would you to play up to?</ControlLabel>
+          <ControlLabel>How many points do you want to play up to?</ControlLabel>
           <input
             type="number"
             className="form-control"
