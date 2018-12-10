@@ -1,23 +1,24 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Row, Col } from 'react-bootstrap';
 
 import './Index.scss';
 
 const Index = () => (
   <div className="Index">
-    <img
-      src="https://s3-us-west-2.amazonaws.com/cleverbeagle-assets/graphics/email-icon.png"
-      alt="Clever Beagle"
-    />
-    <h1>Pup</h1>
-    <p>A boilerplate for products.</p>
+    <h3>Hue</h3>
+    <p>A Heads Up Euchre Game</p>
     <div>
-      <Button href="http://cleverbeagle.com/pup">Read the Docs</Button>
-      <Button href="https://github.com/cleverbeagle/pup"><i className="fa fa-star" /> Star on GitHub</Button>
+      <Button className="button" href="/signup">Get Started</Button>
     </div>
-    <footer>
-      <p>Need help and want to stay accountable building your product? <a href="http://cleverbeagle.com?utm_source=pupappindex&utm_campaign=oss">Check out Clever Beagle</a>.</p>
-    </footer>
+    <br />
+    <br />
+    <Row className="text-left">
+      <Col sm={12} md={6} mdOffset={3}>
+        <p>I was taught how to play Euchre at a young age and we would play all the time as a family growing up. It's a game that is typically played with four people but my Mom and I started experimenting with a two player version five years ago.</p>
+        <p>Now the online version is built and ready to be played - just in time for Christmas.</p>
+        <p>Enjoy, Dave</p>
+      </Col>
+    </Row>
   </div>
 );
 
