@@ -15,21 +15,7 @@ const Games = ({
 }) => (!loading ? (
   <div className="Games">
     {
-      currentGames.length > 0 ? <Redirect to={`/games/${currentGames[0]._id}`} /> : openLength > 0 ? (
-        <div>
-            <OpenGames />
-          <hr />
-          <Profiles />
-        </div>
-      ) : (
-        <Row>
-          <NewGame />
-          <Col sm={12}>
-            <hr />
-            <Profiles />
-          </Col>
-        </Row>
-      )
+      currentGames.length > 0 ? <Redirect to={`/games/${currentGames[0]._id}`} /> : openLength > 0 ? <OpenGames /> : <NewGame />
     }
   </div>
 ) : <Loading />);

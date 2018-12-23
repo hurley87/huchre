@@ -25,6 +25,9 @@ const Profiles = ({
   loading, profiles, match, history,
 }) => (!loading ? (
   <div className="Profiles">
+    <div className="page-header clearfix">
+      <h3 style={{margin: '0px'}} className="pull-left">Leaderboard</h3>
+    </div>
     {profiles.length ?
       <Table responsive>
         <thead>

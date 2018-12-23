@@ -34,12 +34,12 @@ const OpenGames = ({
           {games.map(game => (
             <Col key={game._id} sm={3}>
               <div style={{marginBottom: "0px"}} className='well text-center'>
-                <h5 style={{marginTop: '0px'}}>Play {game.playerOne.username} up to {game.limit}</h5>
+                <h5 style={{marginTop: '0px'}}>Play {game.playerOne.username} up to {game.limit} points</h5>
                 <Button
                   className='button'
                   onClick={() => joinGame(game, history)}
                 >
-                  Join Game
+                  Start Game
                   </Button>
               </div>
             </Col>

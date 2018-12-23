@@ -30,6 +30,7 @@ import Privacy from '../../pages/Privacy/Privacy';
 import ExamplePage from '../../pages/ExamplePage/ExamplePage';
 import Rules from '../../pages/Rules/Rules';
 import NewGame from '../../pages/NewGame/NewGame';
+import Profiles from '../../pages/Profiles/Profiles';
 import './App.scss';
 
 const App = props => (
@@ -48,6 +49,7 @@ const App = props => (
             <Authenticated exact path="/games/:_id" component={ViewGame} {...props} />
             <Authenticated exact path="/documents/:_id/edit" component={EditDocument} {...props} />
             <Authenticated exact path="/profile" component={Profile} {...props} />
+            <Authenticated exact path="/leaderboard" component={Profiles} {...props} />
             <Public path="/signup" component={Signup} {...props} />
             <Public path="/login" component={Login} {...props} />
             <Route path="/logout" component={Logout} {...props} />
