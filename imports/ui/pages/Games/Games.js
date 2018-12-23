@@ -17,15 +17,13 @@ const Games = ({
     {
       currentGames.length > 0 ? <Redirect to={`/games/${currentGames[0]._id}`} /> : openLength > 0 ? (
         <div>
-          <OpenGames />
+            <OpenGames />
           <hr />
           <Profiles />
         </div>
       ) : (
         <Row>
-          <Col sm={4}>
-            <NewGame />
-          </Col>
+          <NewGame />
           <Col sm={12}>
             <hr />
             <Profiles />

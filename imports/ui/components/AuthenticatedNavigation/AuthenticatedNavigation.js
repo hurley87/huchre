@@ -11,8 +11,8 @@ const AuthenticatedNavigation = ({ name, history }) => (
         <LinkContainer to="/games">
           <NavItem eventKey={2.1} href="/games">Games</NavItem>
         </LinkContainer>
-        <LinkContainer to="/rules">
-          <NavItem eventKey={2.1} href="/rules">Rules</NavItem>
+        <LinkContainer to="/">
+          <NavItem eventKey={2.1} href="/">Rules</NavItem>
         </LinkContainer>
         <MenuItem divider />
         <MenuItem eventKey={2.2} onClick={() => history.push('/logout')}>Logout</MenuItem>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, ControlLabel, Button } from 'react-bootstrap';
+import { FormGroup, ControlLabel, Button, Row, Col } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import validate from '../../../modules/validate';
@@ -47,21 +47,25 @@ class NewGame extends React.Component {
   render() {
     const { doc } = this.props;
     return (
-      <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
-        <FormGroup>
-          <ControlLabel>How many points would you like to play up to?</ControlLabel>
-          <input
-            type="number"
-            className="form-control"
-            name="limit"
-            ref={limit => (this.limit = limit)}
-            defaultValue={doc && doc.limit}
-          />
-        </FormGroup>
-        <Button className="button" type="submit" bsStyle="success">
-          Create Game
+      <Row>
+        <Col xs={12} sm={4}>
+          <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
+            <FormGroup>
+              <ControlLabel>How many points would you like to play up to?</ControlLabel>
+              <input
+                type="number"
+                className="form-control"
+                name="limit"
+                ref={limit => (this.limit = limit)}
+                defaultValue={doc && doc.limit}
+              />
+            </FormGroup>
+            <Button className="button" type="submit" bsStyle="success">
+              Create Game
         </Button>
-      </form>
+          </form>
+        </Col>
+      </Row>
     );
   }
 }

@@ -3,7 +3,9 @@
 
 .Index {
   padding: 20px;
-  text-align: center;
+  p {
+    margin: 20px 0px;
+  }
 }
 
 @include breakpoint(tablet) {

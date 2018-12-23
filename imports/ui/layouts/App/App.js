@@ -29,7 +29,7 @@ import Terms from '../../pages/Terms/Terms';
 import Privacy from '../../pages/Privacy/Privacy';
 import ExamplePage from '../../pages/ExamplePage/ExamplePage';
 import Rules from '../../pages/Rules/Rules';
-
+import NewGame from '../../pages/NewGame/NewGame';
 import './App.scss';
 
 const App = props => (
@@ -44,6 +44,7 @@ const App = props => (
             <Authenticated exact path="/documents" component={Documents} {...props} />
             <Authenticated exact path="/documents/new" component={NewDocument} {...props} />
             <Authenticated exact path="/documents/:_id" component={ViewDocument} {...props} />
+            <Authenticated exact path="/games/new" component={NewGame} {...props} />
             <Authenticated exact path="/games/:_id" component={ViewGame} {...props} />
             <Authenticated exact path="/documents/:_id/edit" component={EditDocument} {...props} />
             <Authenticated exact path="/profile" component={Profile} {...props} />

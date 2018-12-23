@@ -25,11 +25,15 @@ const OpenGames = ({
   loading, games, match, history,
 }) => (!loading ? (
   <div className="OpenGames">
+    <div className="page-header clearfix">
+      <h3 style={{margin: '0px'}} className="pull-left">Games</h3>
+        <Link className="button pull-right" to={`/games/new`}>New Game</Link>
+    </div>
     {games.length ?
       <Row>
           {games.map(game => (
             <Col key={game._id} sm={3}>
-              <div className='well text-center'>
+              <div style={{marginBottom: "0px"}} className='well text-center'>
                 <h5 style={{marginTop: '0px'}}>Play {game.playerOne.username} up to {game.limit}</h5>
                 <Button
                   className='button'
