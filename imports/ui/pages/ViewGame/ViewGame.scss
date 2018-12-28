@@ -10,6 +10,12 @@
   background-color: #fff;
   z-index: 999999;
 
+
+  .fadedColor {
+    background: #7f8c8d;
+    opacity: 0.3;
+  }
+
   .endgame {
     position: absolute;
     right: 2px;
@@ -80,6 +86,7 @@
     bottom: 0px;
     width: 300px;
     border-left: 2px solid #eee;
+    background-color: #fff;
 
     .messages {
       text-align: left;
@@ -113,13 +120,15 @@
     .bottomCards {
       width: 100%;
       position: absolute;
-      bottom: 20px;
+      bottom: 10px;
+      padding-bottom: 20px;
     }
 
     .topCards {
       width: 100%;
       position: absolute;
-      top: 20px;
+      padding-top: 20px;
+      top: 10px;
     }
   }
 }

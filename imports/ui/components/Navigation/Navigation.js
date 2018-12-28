@@ -11,7 +11,7 @@ const Navigation = props => (
   <Navbar>
     <Navbar.Header>
       <Navbar.Brand>
-        <Link to={!props.authenticated ? '/' : '/games'}>Hue</Link>
+        <Link to={!props.authenticated ? '/' : '/games'}>hue</Link>
       </Navbar.Brand>
       <Navbar.Toggle />
     </Navbar.Header>

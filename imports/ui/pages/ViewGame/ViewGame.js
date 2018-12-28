@@ -426,7 +426,7 @@ const pickupCurrentUi = (player, currentState) => (player ? (
 
 const pickupOpposingUi = (player, currentState) => (player ? (
   <div>
-    { currentState.playerOne.id === player.id ? currentState.playerOne.username : currentState.playerTwo.username } is deciding wether or not to pick up {renderCard(currentState.deck[0].suit, currentState.deck[0].value)}
+    { currentState.playerOne.id === player.id ? currentState.playerTwo.username : currentState.playerOne.username } is deciding wether or not to pick up {renderCard(currentState.deck[0].suit, currentState.deck[0].value)}
   </div>
 ) : null);
 
@@ -515,7 +515,9 @@ const makeCurrentUi = (player, currentState) => (player ? (
 
 const makeOpposingUi = (player, currentState) => (player ? (
   <div>
-    <h5>Waiting on {player.username} to make it</h5>
+    <br />
+    <br />
+    <h5>Waiting on {currentState.playerOne.id === player.id ? currentState.playerTwo.username : currentState.playerOne.username} to make it</h5>
   </div>
 ) : null);
 
@@ -568,7 +570,7 @@ const stdCurrentUi = (player, currentState) => (player ? (
 
 const stdOpposingUi = (player, currentState) => (player ? (
   <div>
-    <h5>Waiting on {currentState.playerOne.id === player.id ? currentState.playerOne.username : currentState.playerTwo.username } to make it</h5>
+    <h5>Waiting on {currentState.playerOne.id === player.id ? currentState.playerTwo.username : currentState.playerOne.username } to make it</h5>
   </div>
 ) : null);
 
@@ -842,7 +844,7 @@ const renderTableView = (currentState) => {
   return component;
 };
 
-const dealer = () => (<span className="badge">D</span>);
+const dealer = () => (<span className="badge">Dealer</span>);
 const yourTurn = currentState => (<span className="badge">Your { currentState.handCount % 2 === 0 ? 'lead' : 'turn'}</span>);
 
 const renderTopCards = (player, currentState) => (
@@ -930,10 +932,10 @@ const renderTableLayout = (currentState, gameId) => {
             <div className="resultsBottom">
               {renderBottomResults(currentPlayer, currentState)}
             </div>
-            <div className="bottomCards">
+            <div className={ currentState.currentPlayer != Meteor.userId() ? "bottomCards fadedColor" : "bottomCards"}>
               {renderBottomCards(currentPlayer, currentState)}
             </div>
-            <div className="topCards">
+            <div className={ currentState.currentPlayer == Meteor.userId() ? "topCards fadedColor" : "topCards"}>
               {renderTopCards(opposingPlayer, currentState)}
             </div>
           </div>
