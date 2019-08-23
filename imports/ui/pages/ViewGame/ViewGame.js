@@ -15,11 +15,11 @@ import Messages from '../Messages/Messages';
 import _ from 'lodash';
 import './ViewGame.scss';
 
-const renderCard = (suit, value) => <img className="play-card" alt="player-card" src={`/${suit}/${value}.png`} height="100" />;
+const renderCard = (suit, value) => <img className="play-card" alt="player-card" src={`https://adsgen.s3.amazonaws.com/${suit}/${value}.png`} height="100" />;
 
-const renderSuit = suit => <img height="20px" src={`/Suits/${suit}.png`} />;
+const renderSuit = suit => <img height="20px" src={`https://adsgen.s3.amazonaws.com/${suit}.png`} />;
 
-const renderCover = () => <img className="play-card" src="/Covers/blue.png" height="100" />;
+const renderCover = () => <img className="play-card" src={`https://adsgen.s3.amazonaws.com/blue.png`} height="100" />;
 
 const endGame = (gameId) => {
   if (confirm('Are you sure you want to end this game?')) {
