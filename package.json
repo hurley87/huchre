@@ -17,7 +17,7 @@
     "juice": "^4.2.2",
     "lodash": "^4.17.11",
     "meteor-node-stubs": "^0.3.2",
-    "moment": "^2.19.1",
+    "moment": "^2.29.2",
     "moment-timezone": "^0.5.14",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
